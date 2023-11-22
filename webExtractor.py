@@ -9,8 +9,6 @@ url = "https://www.coordenadas-gps.com/"
 driver.get(url)
 direc = "CARRER JUAN XXIII 2"
 
-time.sleep(2)
-
 address_input = driver.find_element("id", "address")
 address_input.clear()  
 address_input.send_keys(direc)
@@ -19,8 +17,7 @@ address_input.send_keys(direc)
 button = driver.find_element(By.XPATH, "//button[contains(text(), 'Obtener Coordenadas GPS')]")
 button.click()
 
-time.sleep(4)
-
+sleep(1)
 latitude_input = driver.find_element("id", "latitude")
 longitude_input = driver.find_element("id", "longitude")
 
