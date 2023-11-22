@@ -1,40 +1,34 @@
-import json
 import xml.etree.ElementTree as ET
+import json
 
-# Función para extraer datos desde un archivo XML
-def extraer_datos_desde_xml(archivo_xml):
-    try:
-        tree = ET.parse(archivo_xml)
-        root = tree.getroot()
-        datos = []
-        for row in root.findall('row'):
-            dato = {}
-            for child in row:
-                if child.tag == 'row':
-                    subdato = {}
-                    for subchild in child:
-                        subdato[subchild.tag] = subchild.text
-                    datos.append(subdato)
-                else:
-                    dato[child.tag] = child.text
-            datos.append(dato)
-        return datos
-    except FileNotFoundError:
-        print(f"El archivo XML {archivo_xml} no se encontró.")
-        return None
-    except ET.ParseError as e:
-        print(f"Error al analizar el archivo XML: {e}")
-        return None
+def xml_to_json(xml_file, json_file):
+    # Parsear el archivo XML
+    tree = ET.parse(xml_file)
+    root = tree.getroot()
+
+    # Crear una lista para almacenar los datos
+    data = []
+
+    # Recorrer los elementos del XML y extraer los datos
+    for row_elem in root.findall('.//row'):
+        centro = {}
+        for child_elem in row_elem:
+            # Utilizar el nombre del elemento como clave y el texto como valor
+            centro[child_elem.tag] = child_elem.text
+
+        # Agregar el diccionario a la lista de datos
+        data.append(centro)
     
-# Uso del wrapper para extraer datos de un XML
-archivo_xml = './centres.xml'  # Reemplaza con la ubicación de tu archivo XML
-datos_extraidos_xml = extraer_datos_desde_xml(archivo_xml)
+    # Excluir el primer elemento de la lista si es un salto de línea
+    if data and "row" in data[0] and data[0]["row"].strip() == "":
+        data.pop(0)
 
-# Guardar los datos del XML en un archivo JSON
-archivo_json_xml = 'datos_xml_CAT.json'
-try:
-    with open(archivo_json_xml, 'w', encoding='utf-8') as archivo_json:
-        json.dump(datos_extraidos_xml, archivo_json, ensure_ascii=False, indent=4)
-    print(f"Los datos del XML se han guardado en {archivo_json_xml}.")
-except Exception as e:
-    print(f"Ocurrió un error al escribir los datos del XML en el archivo JSON: {e}")
+    # Convertir la lista de datos a formato JSON
+    json_data = json.dumps(data, indent=2, ensure_ascii=False)
+
+    # Escribir los datos en un archivo JSON
+    with open(json_file, 'w', encoding='utf-8') as f:
+        f.write(json_data)
+
+# Llamar a la función con el nombre del archivo XML y el nombre del archivo JSON
+xml_to_json('../centres.xml', '../datos_xml_CAT.json')
