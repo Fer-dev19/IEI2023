@@ -8,14 +8,14 @@ cursor = conn.cursor()
 # Crear las tablas si no existen
 cursor.execute('''
     CREATE TABLE IF NOT EXISTS Provincia (
-        codigo INTEGER,
+        codigo INTEGER PRIMARY KEY,
         nombre TEXT
     )
 ''')
 
 cursor.execute('''
     CREATE TABLE IF NOT EXISTS Localidad (
-        codigo INTEGER,
+        codigo INTEGER PRIMARY KEY,
         nombre TEXT,
         provincia INTEGER,
         FOREIGN KEY (provincia) REFERENCES Provincia(codigo)
@@ -53,7 +53,7 @@ def insert_centro_educativo(nombre, tipo, direccion, codigo_postal, longitud, la
     ''', (nombre, tipo, direccion, codigo_postal, longitud, latitud, telefono, descripcion, localidad))
 
 # Cargar datos desde el archivo JSON
-with open('../datos_xml_CAT.json', 'r', encoding='utf-8') as json_file:
+with open('../archivosJSON/CAT.json', 'r', encoding='utf-8') as json_file:
     data = json.load(json_file)
 
     for entry in data:

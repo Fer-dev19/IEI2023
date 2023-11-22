@@ -31,4 +31,4 @@ def xml_to_json(xml_file, json_file):
         f.write(json_data)
 
 # Llamar a la función con el nombre del archivo XML y el nombre del archivo JSON
-xml_to_json('../centres.xml', '../datos_xml_CAT.json')
+xml_to_json('../archivosEntrada/CAT.xml', '../archivosJSON/CAT.json')

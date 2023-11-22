@@ -38,7 +38,7 @@ cursor.execute('''
 ''')
 
 # Cargar datos desde el archivo JSON
-with open('../datos_json_MUR.json', 'r', encoding='utf-8') as file:
+with open('../archivosJSON/MUR.json', 'r', encoding='utf-8') as file:
     data = json.load(file)
 
 # Función para obtener el tipo correcto
@@ -54,22 +54,23 @@ def obtener_tipo(titularidad):
 
 # Insertar datos en las tablas
 for centro in data:
-    # Obtener el primer dígito del código postal según las tres posibilidades
-    if len(centro['cpcen']) == 5:
-        codigo_provincia = centro['cpcen'][:2]
-    elif len(centro['cpcen']) == 4:
-        codigo_provincia = centro['cpcen'][:1]
+    # # Obtener el primer dígito del código postal según las tres posibilidades
+    # if len(centro['cpcen']) == 5:
+    #     codigo_provincia = centro['cpcen'][:2]
+    # elif len(centro['cpcen']) == 4:
+    #     codigo_provincia = centro['cpcen'][:1]
+    codigo_localidad = int(centro['cpcen']) if centro.get('cpcen') and centro['cpcen'].isdigit() else None
 
     # Insertar en la tabla Provincia
-    cursor.execute('INSERT OR IGNORE INTO Provincia VALUES (?, ?)', (codigo_provincia, 'Murcia'))
+    cursor.execute('INSERT OR IGNORE INTO Provincia VALUES (?, ?)', (30, 'Murcia'))
 
     # Insertar en la tabla Localidad
-    cursor.execute('INSERT OR IGNORE INTO Localidad VALUES (?, ?, ?)', (centro['cpcen'], centro['loccen'], codigo_provincia))
+    cursor.execute('INSERT OR IGNORE INTO Localidad VALUES (?, ?, ?)', (codigo_localidad, centro['loccen'], 30))
 
     # Insertar en la tabla Centro_Educativo
-cursor.execute('''
+    cursor.execute('''
     INSERT INTO Centro_Educativo VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-''', (
+    ''', (
     centro['denLarga'] + ' ' + centro['dencen'],
     obtener_tipo(centro['titularidad']),
     centro['domcen'],

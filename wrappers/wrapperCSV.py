@@ -18,11 +18,11 @@ def extraer_datos_desde_csv(archivo_csv):
         return None
 
 # Uso del wrapper para extraer datos de un CSV
-archivo_csv = './centrosValencia.csv'  # Reemplaza con la ubicación de tu archivo CSV
+archivo_csv = '../archivosEntrada/CV.csv'  # Reemplaza con la ubicación de tu archivo CSV
 datos_extraidos_csv = extraer_datos_desde_csv(archivo_csv)
 
 # Guardar los datos del CSV en un archivo JSON
-archivo_json_csv = 'datos_csv_CV.json'
+archivo_json_csv = '../archivosJSON/CV.json'
 try:
     with open(archivo_json_csv, 'w', encoding='utf-8') as archivo_json:
         json.dump(datos_extraidos_csv, archivo_json, ensure_ascii=False, indent=4)

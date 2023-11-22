@@ -38,7 +38,7 @@ cursor.execute('''
 ''')
 
 # Cargar datos desde el archivo JSON
-with open('../datos_csv_CV.json', 'r', encoding='utf-8') as file:
+with open('../archivosJSON/CV.json', 'r', encoding='utf-8') as file:
     data = json.load(file)
 
 # Función para obtener el tipo correcto
