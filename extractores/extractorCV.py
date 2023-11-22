@@ -2,7 +2,7 @@ import sqlite3
 import json
 
 # Conexión a la base de datos SQLite
-conn = sqlite3.connect('baseDatos.db')
+conn = sqlite3.connect('../baseDatos.db')
 cursor = conn.cursor()
 
 # Crear tablas si no existen
@@ -38,7 +38,7 @@ cursor.execute('''
 ''')
 
 # Cargar datos desde el archivo JSON
-with open('datos_csv_CV.json', 'r', encoding='utf-8') as file:
+with open('../datos_csv_CV.json', 'r', encoding='utf-8') as file:
     data = json.load(file)
 
 # Función para obtener el tipo correcto

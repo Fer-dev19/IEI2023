@@ -8,14 +8,14 @@ cursor = conn.cursor()
 # Crear las tablas si no existen
 cursor.execute('''
     CREATE TABLE IF NOT EXISTS Provincia (
-        codigo INTEGER PRIMARY KEY,
+        codigo INTEGER,
         nombre TEXT
     )
 ''')
 
 cursor.execute('''
     CREATE TABLE IF NOT EXISTS Localidad (
-        codigo INTEGER PRIMARY KEY,
+        codigo INTEGER,
         nombre TEXT,
         provincia INTEGER,
         FOREIGN KEY (provincia) REFERENCES Provincia(codigo)
@@ -60,10 +60,10 @@ with open('../datos_xml_CAT.json', 'r', encoding='utf-8') as json_file:
         # Transformaciones según las especificaciones
         codigo_provincia = int(entry['codi_postal'][:2])
         nombre_provincia = {
-            '08': 'Barcelona',
+            '8': 'Barcelona',
             '17': 'Girona',
             '25': 'Lleida',
-            '32': 'Tarragona'
+            '43': 'Tarragona'
         }.get(str(codigo_provincia), 'Desconocida')
 
         codigo_localidad = int(entry['codi_municipi_6_digits']) if len(entry['codi_municipi_6_digits']) == 6 else int('0' + entry['codi_municipi_6_digits'][:5])
