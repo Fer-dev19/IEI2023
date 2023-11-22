@@ -8,16 +8,16 @@ cursor = conn.cursor()
 # Crear tablas si no existen
 cursor.execute('''
     CREATE TABLE IF NOT EXISTS Provincia (
-        codigo TEXT PRIMARY KEY,
+        codigo INTEGER PRIMARY KEY,
         nombre TEXT
     )
 ''')
 
 cursor.execute('''
     CREATE TABLE IF NOT EXISTS Localidad (
-        codigo TEXT PRIMARY KEY,
+        codigo INTEGER PRIMARY KEY,
         nombre TEXT,
-        provincia TEXT,
+        provincia INTEGER,
         FOREIGN KEY (provincia) REFERENCES Provincia (codigo)
     )
 ''')
@@ -32,7 +32,7 @@ cursor.execute('''
         latitud REAL,
         telefono TEXT,
         descripcion TEXT,
-        localidad TEXT,
+        localidad INTEGER,
         FOREIGN KEY (localidad) REFERENCES Localidad (codigo)
     )
 ''')
@@ -56,11 +56,16 @@ def obtener_tipo(regimen):
 
 # Insertar datos en las tablas
 for centro in data:
+    # Obtener el primer dígito del código postal según las tres posibilidades
+    if len(centro['CODIGO_POSTAL']) == 5:
+        codigo_provincia = centro['CODIGO_POSTAL'][:2]
+    elif len(centro['CODIGO_POSTAL']) == 4:
+        codigo_provincia = centro['CODIGO_POSTAL'][:1]
     # Insertar en la tabla Provincia
-    cursor.execute('INSERT OR IGNORE INTO Provincia VALUES (?, ?)', (centro['CODIGO_POSTAL'], centro['PROVINCIA']))
+    cursor.execute('INSERT OR IGNORE INTO Provincia VALUES (?, ?)', (codigo_provincia, centro['PROVINCIA']))
 
     # Insertar en la tabla Localidad
-    cursor.execute('INSERT OR IGNORE INTO Localidad VALUES (?, ?, ?)', (0, centro['LOCALIDAD'], centro['CODIGO_POSTAL']))
+    cursor.execute('INSERT OR IGNORE INTO Localidad VALUES (?, ?, ?)', (centro['CODIGO_POSTAL'], centro['LOCALIDAD'], codigo_provincia))
 
     # Insertar en la tabla Centro_Educativo
     cursor.execute('''

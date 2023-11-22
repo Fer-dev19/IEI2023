@@ -39,11 +39,11 @@ cursor.execute('''
 
 # Función para insertar provincia en la base de datos
 def insert_provincia(codigo, nombre):
-    cursor.execute('INSERT INTO Provincia (codigo, nombre) VALUES (?, ?)', (codigo, nombre))
+    cursor.execute('INSERT OR IGNORE INTO Provincia (codigo, nombre) VALUES (?, ?)', (codigo, nombre))
 
 # Función para insertar localidad en la base de datos
 def insert_localidad(codigo, nombre, provincia):
-    cursor.execute('INSERT INTO Localidad (codigo, nombre, provincia) VALUES (?, ?, ?)', (codigo, nombre, provincia))
+    cursor.execute('INSERT OR IGNORE INTO Localidad (codigo, nombre, provincia) VALUES (?, ?, ?)', (codigo, nombre, provincia))
 
 # Función para insertar centro educativo en la base de datos
 def insert_centro_educativo(nombre, tipo, direccion, codigo_postal, longitud, latitud, telefono, descripcion, localidad):
