@@ -1,5 +1,10 @@
 import sqlite3
 import json
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+import time
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
 
 # Conexión a la base de datos SQLite
 conn = sqlite3.connect('../baseDatos.db')
@@ -54,6 +59,33 @@ def obtener_tipo(regimen):
     else:
         return None
 
+def searchDir(direc):
+    address_input = driver.find_element("id", "address")
+    address_input.clear()  
+    address_input.send_keys(direc)
+
+    button = driver.find_element(By.XPATH, "//button[contains(text(), 'Obtener Coordenadas GPS')]")
+    button.click()
+    time.sleep(2)
+
+def getLatitude(driver):
+
+    latitude_input = driver.find_element("id", "latitude")
+
+    return latitude_input.get_attribute("value")
+   
+def getLongitude(driver):
+
+    longitude_input = driver.find_element("id", "longitude")
+
+    return longitude_input.get_attribute("value")
+
+options = webdriver.ChromeOptions()
+options.add_experimental_option("detach", True)
+driver = webdriver.Chrome(options=options)
+url = "https://www.coordenadas-gps.com/"
+driver.get(url)
+time.sleep(3)
 # Insertar datos en las tablas
 for centro in data:
     # Obtener el primer dígito del código postal según las tres posibilidades
@@ -66,7 +98,7 @@ for centro in data:
 
     # Insertar en la tabla Localidad
     cursor.execute('INSERT OR IGNORE INTO Localidad VALUES (?, ?, ?)', (centro['CODIGO_POSTAL'], centro['LOCALIDAD'], codigo_provincia))
-
+    searchDir(centro['DIRECCION'])
     # Insertar en la tabla Centro_Educativo
     cursor.execute('''
         INSERT INTO Centro_Educativo VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -75,8 +107,8 @@ for centro in data:
         obtener_tipo(centro['REGIMEN']),
         f"{centro['TIPO_VIA']} {centro['DIRECCION']} {centro['NUMERO']}",
         centro['CODIGO_POSTAL'],
-        0,  # Longitud
-        0,  # Latitud
+        getLongitude(driver),  
+        getLatitude(driver), 
         centro['TELEFONO'],
         f"{centro['DENOMINACION_GENERICA_ES']} {centro['DENOMINACION_GENERICA_VAL']} {centro['DENOMINACION_ESPECIFICA']} {centro['URL_ES']}",
         centro['CODIGO']
