@@ -24,7 +24,7 @@ cursor.execute('''
 
 cursor.execute('''
     CREATE TABLE IF NOT EXISTS Centro_Educativo (
-        nombre TEXT,
+        nombre TEXT PRIMARY KEY,
         tipo TEXT,
         direccion TEXT,
         codigo_postal TEXT,
@@ -54,11 +54,6 @@ def obtener_tipo(titularidad):
 
 # Insertar datos en las tablas
 for centro in data:
-    # # Obtener el primer dígito del código postal según las tres posibilidades
-    # if len(centro['cpcen']) == 5:
-    #     codigo_provincia = centro['cpcen'][:2]
-    # elif len(centro['cpcen']) == 4:
-    #     codigo_provincia = centro['cpcen'][:1]
     codigo_localidad = int(centro['cpcen']) if centro.get('cpcen') and centro['cpcen'].isdigit() else None
 
     # Insertar en la tabla Provincia
@@ -69,7 +64,8 @@ for centro in data:
 
     # Insertar en la tabla Centro_Educativo
     cursor.execute('''
-    INSERT INTO Centro_Educativo VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT OR IGNORE INTO Centro_Educativo (nombre, tipo, direccion, codigo_postal, longitud, latitud, telefono, descripcion, localidad) 
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     ''', (
     centro['denLarga'] + ' ' + centro['dencen'],
     obtener_tipo(centro['titularidad']),

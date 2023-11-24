@@ -29,7 +29,7 @@ cursor.execute('''
 
 cursor.execute('''
     CREATE TABLE IF NOT EXISTS Centro_Educativo (
-        nombre TEXT,
+        nombre TEXT PRIMARY KEY,
         tipo TEXT,
         direccion TEXT,
         codigo_postal TEXT,
@@ -99,7 +99,8 @@ for centro in data:
     searchDir(centro['DIRECCION'])
     # Insertar en la tabla Centro_Educativo
     cursor.execute('''
-        INSERT OR IGNORE INTO Centro_Educativo VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT OR IGNORE INTO Centro_Educativo (nombre, tipo, direccion, codigo_postal, longitud, latitud, telefono, descripcion, localidad)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     ''', (
         centro['DENOMINACION'],
         obtener_tipo(centro['REGIMEN']),

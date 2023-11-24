@@ -24,7 +24,7 @@ cursor.execute('''
 
 cursor.execute('''
     CREATE TABLE IF NOT EXISTS Centro_Educativo (
-        nombre TEXT,
+        nombre TEXT PRIMARY KEY,
         tipo TEXT,
         direccion TEXT,
         codigo_postal TEXT,
@@ -48,7 +48,7 @@ def insert_localidad(codigo, nombre, provincia):
 # Función para insertar centro educativo en la base de datos
 def insert_centro_educativo(nombre, tipo, direccion, codigo_postal, longitud, latitud, telefono, descripcion, localidad):
     cursor.execute('''
-        INSERT INTO Centro_Educativo (nombre, tipo, direccion, codigo_postal, longitud, latitud, telefono, descripcion, localidad)
+        INSERT OR IGNORE INTO Centro_Educativo (nombre, tipo, direccion, codigo_postal, longitud, latitud, telefono, descripcion, localidad)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     ''', (nombre, tipo, direccion, codigo_postal, longitud, latitud, telefono, descripcion, localidad))
 
