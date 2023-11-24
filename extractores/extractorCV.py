@@ -62,23 +62,20 @@ def obtener_tipo(regimen):
 def searchDir(direc):
     address_input = driver.find_element("id", "address")
     address_input.clear()  
+    direc += ", Valencia, España"
     address_input.send_keys(direc)
 
     button = driver.find_element(By.XPATH, "//button[contains(text(), 'Obtener Coordenadas GPS')]")
     button.click()
-    time.sleep(2)
+    time.sleep(3)
 
 def getLatitude(driver):
-
     latitude_input = driver.find_element("id", "latitude")
-
-    return latitude_input.get_attribute("value")
+    return float(latitude_input.get_attribute("value"))
    
 def getLongitude(driver):
-
     longitude_input = driver.find_element("id", "longitude")
-
-    return longitude_input.get_attribute("value")
+    return float(longitude_input.get_attribute("value"))
 
 options = webdriver.ChromeOptions()
 options.add_experimental_option("detach", True)
@@ -98,22 +95,24 @@ for centro in data:
 
     # Insertar en la tabla Localidad
     cursor.execute('INSERT OR IGNORE INTO Localidad VALUES (?, ?, ?)', (centro['CODIGO_POSTAL'], centro['LOCALIDAD'], codigo_provincia))
+    
     searchDir(centro['DIRECCION'])
     # Insertar en la tabla Centro_Educativo
     cursor.execute('''
-        INSERT INTO Centro_Educativo VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT OR IGNORE INTO Centro_Educativo VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     ''', (
         centro['DENOMINACION'],
         obtener_tipo(centro['REGIMEN']),
         f"{centro['TIPO_VIA']} {centro['DIRECCION']} {centro['NUMERO']}",
         centro['CODIGO_POSTAL'],
         getLongitude(driver),  
-        getLatitude(driver), 
+        getLatitude(driver),
         centro['TELEFONO'],
         f"{centro['DENOMINACION_GENERICA_ES']} {centro['DENOMINACION_GENERICA_VAL']} {centro['DENOMINACION_ESPECIFICA']} {centro['URL_ES']}",
         centro['CODIGO']
     ))
 
+driver.quit()
 # Guardar cambios y cerrar conexión
 conn.commit()
 conn.close()
