@@ -1,11 +1,9 @@
 import sqlite3
 import json
 
-# Conexión a la base de datos SQLite
 conn = sqlite3.connect('../baseDatos.db')
 cursor = conn.cursor()
 
-# Crear las tablas si no existen
 cursor.execute('''
     CREATE TABLE IF NOT EXISTS Provincia (
         codigo INTEGER PRIMARY KEY,
@@ -37,27 +35,22 @@ cursor.execute('''
     )
 ''')
 
-# Función para insertar provincia en la base de datos
 def insert_provincia(codigo, nombre):
     cursor.execute('INSERT OR IGNORE INTO Provincia (codigo, nombre) VALUES (?, ?)', (codigo, nombre))
 
-# Función para insertar localidad en la base de datos
 def insert_localidad(codigo, nombre, provincia):
     cursor.execute('INSERT OR IGNORE INTO Localidad (codigo, nombre, provincia) VALUES (?, ?, ?)', (codigo, nombre, provincia))
 
-# Función para insertar centro educativo en la base de datos
 def insert_centro_educativo(nombre, tipo, direccion, codigo_postal, longitud, latitud, telefono, descripcion, localidad):
     cursor.execute('''
         INSERT OR IGNORE INTO Centro_Educativo (nombre, tipo, direccion, codigo_postal, longitud, latitud, telefono, descripcion, localidad)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     ''', (nombre, tipo, direccion, codigo_postal, longitud, latitud, telefono, descripcion, localidad))
 
-# Cargar datos desde el archivo JSON
 with open('../archivosJSON/CAT.json', 'r', encoding='utf-8') as json_file:
     data = json.load(json_file)
 
     for entry in data:
-        # Transformaciones según las especificaciones
         codigo_provincia = int(entry['codi_postal'][:2])
         nombre_provincia = {
             '8': 'Barcelona',
@@ -68,7 +61,6 @@ with open('../archivosJSON/CAT.json', 'r', encoding='utf-8') as json_file:
 
         codigo_localidad = int(entry['codi_municipi_6_digits']) if len(entry['codi_municipi_6_digits']) == 6 else int('0' + entry['codi_municipi_6_digits'][:5])
 
-        # Insertar datos en las tablas
         insert_provincia(codigo_provincia, nombre_provincia)
         insert_localidad(codigo_localidad, entry['nom_municipi'], codigo_provincia)
 
@@ -87,6 +79,5 @@ with open('../archivosJSON/CAT.json', 'r', encoding='utf-8') as json_file:
             codigo_localidad
         )
 
-# Confirmar los cambios y cerrar la conexión
 conn.commit()
 conn.close()

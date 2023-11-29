@@ -1,7 +1,6 @@
 import csv
 import json
 
-# Función para extraer datos desde un archivo CSV
 def extraer_datos_desde_csv(archivo_csv):
     datos = []
     try:
@@ -17,11 +16,9 @@ def extraer_datos_desde_csv(archivo_csv):
         print(f"Ocurrió un error al extraer datos del CSV: {e}")
         return None
 
-# Uso del wrapper para extraer datos de un CSV
-archivo_csv = '../archivosEntrada/CV.csv'  # Reemplaza con la ubicación de tu archivo CSV
+archivo_csv = '../archivosEntrada/CV.csv'
 datos_extraidos_csv = extraer_datos_desde_csv(archivo_csv)
 
-# Guardar los datos del CSV en un archivo JSON
 archivo_json_csv = '../archivosJSON/CV.json'
 try:
     with open(archivo_json_csv, 'w', encoding='utf-8') as archivo_json:

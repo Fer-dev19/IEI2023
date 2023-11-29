@@ -6,11 +6,9 @@ import time
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 
-# Conexión a la base de datos SQLite
 conn = sqlite3.connect('../baseDatos.db')
 cursor = conn.cursor()
 
-# Crear tablas si no existen
 cursor.execute('''
     CREATE TABLE IF NOT EXISTS Provincia (
         codigo INTEGER PRIMARY KEY,
@@ -42,11 +40,9 @@ cursor.execute('''
     )
 ''')
 
-# Cargar datos desde el archivo JSON
 with open('../archivosJSON/CV.json', 'r', encoding='utf-8') as file:
     data = json.load(file)
 
-# Función para obtener el tipo correcto
 def obtener_tipo(regimen):
     if regimen == 'PÚB.':
         return 'público'
@@ -83,21 +79,18 @@ driver = webdriver.Chrome(options=options)
 url = "https://www.coordenadas-gps.com/"
 driver.get(url)
 time.sleep(3)
-# Insertar datos en las tablas
 for centro in data:
-    # Obtener el primer dígito del código postal según las tres posibilidades
+    
     if len(centro['CODIGO_POSTAL']) == 5:
         codigo_provincia = centro['CODIGO_POSTAL'][:2]
     elif len(centro['CODIGO_POSTAL']) == 4:
         codigo_provincia = centro['CODIGO_POSTAL'][:1]
-    # Insertar en la tabla Provincia
+    
     cursor.execute('INSERT OR IGNORE INTO Provincia VALUES (?, ?)', (codigo_provincia, centro['PROVINCIA']))
 
-    # Insertar en la tabla Localidad
     cursor.execute('INSERT OR IGNORE INTO Localidad VALUES (?, ?, ?)', (centro['CODIGO_POSTAL'], centro['LOCALIDAD'], codigo_provincia))
     
     searchDir(centro['DIRECCION'])
-    # Insertar en la tabla Centro_Educativo
     cursor.execute('''
         INSERT OR IGNORE INTO Centro_Educativo (nombre, tipo, direccion, codigo_postal, longitud, latitud, telefono, descripcion, localidad)
                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -114,6 +107,5 @@ for centro in data:
     ))
 
 driver.quit()
-# Guardar cambios y cerrar conexión
 conn.commit()
 conn.close()

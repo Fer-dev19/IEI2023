@@ -1,11 +1,9 @@
 import sqlite3
 import json
 
-# Conexión a la base de datos SQLite
 conn = sqlite3.connect('../baseDatos.db')
 cursor = conn.cursor()
 
-# Crear tablas si no existen
 cursor.execute('''
     CREATE TABLE IF NOT EXISTS Provincia (
         codigo INTEGER PRIMARY KEY,
@@ -37,11 +35,9 @@ cursor.execute('''
     )
 ''')
 
-# Cargar datos desde el archivo JSON
 with open('../archivosJSON/MUR.json', 'r', encoding='utf-8') as file:
     data = json.load(file)
 
-# Función para obtener el tipo correcto
 def obtener_tipo(titularidad):
     if titularidad == 'P':
         return 'público'
@@ -52,17 +48,13 @@ def obtener_tipo(titularidad):
     else:
         return None
 
-# Insertar datos en las tablas
 for centro in data:
     codigo_localidad = int(centro['cpcen']) if centro.get('cpcen') and centro['cpcen'].isdigit() else None
 
-    # Insertar en la tabla Provincia
     cursor.execute('INSERT OR IGNORE INTO Provincia VALUES (?, ?)', (30, 'Murcia'))
 
-    # Insertar en la tabla Localidad
     cursor.execute('INSERT OR IGNORE INTO Localidad VALUES (?, ?, ?)', (codigo_localidad, centro['loccen'], 30))
 
-    # Insertar en la tabla Centro_Educativo
     cursor.execute('''
     INSERT OR IGNORE INTO Centro_Educativo (nombre, tipo, direccion, codigo_postal, longitud, latitud, telefono, descripcion, localidad) 
                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -71,13 +63,12 @@ for centro in data:
     obtener_tipo(centro['titularidad']),
     centro['domcen'],
     centro['cpcen'],
-    centro['geo-referencia']['lon'],  # Corregir aquí
-    centro['geo-referencia']['lat'],  # Corregir aquí
+    centro['geo-referencia']['lon'],
+    centro['geo-referencia']['lat'],
     centro['telcen'],
     centro['presentacionCorta'] + ' ' + centro['web'],
     centro['cpcen']
 ))
 
-# Guardar cambios y cerrar conexión
 conn.commit()
 conn.close()
