@@ -45,13 +45,13 @@ with open('../archivosJSON/CV.json', 'r', encoding='utf-8') as file:
 
 def obtener_tipo(regimen):
     if regimen == 'PÚB.':
-        return 'público'
+        return 'Público'
     elif regimen == 'PRIV. CONC.':
-        return 'concertado'
+        return 'Concertado'
     elif regimen == 'PRIV.':
-        return 'privado'
+        return 'Privado'
     elif regimen == 'OTROS':
-        return 'otros'
+        return 'Otros'
     else:
         return None
 
@@ -80,6 +80,16 @@ url = "https://www.coordenadas-gps.com/"
 driver.get(url)
 time.sleep(3)
 for centro in data:
+    if centro['TELEFONO'] == "":
+        telefono = None
+    else: telefono = centro['TELEFONO']
+
+    if len(centro['CODIGO_POSTAL']) == 5:
+        codigo_postal = centro['CODIGO_POSTAL']
+    elif len(centro['CODIGO_POSTAL']) == 4:
+        codigo_postal = '0'+centro['CODIGO_POSTAL']
+    elif centro['CODIGO_POSTAL'] == None:
+        codigo_postal = None
     
     if len(centro['CODIGO_POSTAL']) == 5:
         codigo_provincia = centro['CODIGO_POSTAL'][:2]
@@ -98,10 +108,10 @@ for centro in data:
         centro['DENOMINACION'],
         obtener_tipo(centro['REGIMEN']),
         f"{centro['TIPO_VIA']} {centro['DIRECCION']} {centro['NUMERO']}",
-        centro['CODIGO_POSTAL'],
+        codigo_postal,
         getLongitude(driver),  
         getLatitude(driver),
-        centro['TELEFONO'],
+        telefono,
         f"{centro['DENOMINACION_GENERICA_ES']} {centro['DENOMINACION_GENERICA_VAL']} {centro['DENOMINACION_ESPECIFICA']} {centro['URL_ES']}",
         centro['CODIGO']
     ))

@@ -40,15 +40,19 @@ with open('../archivosJSON/MUR.json', 'r', encoding='utf-8') as file:
 
 def obtener_tipo(titularidad):
     if titularidad == 'P':
-        return 'público'
+        return 'Público'
     elif titularidad == 'N':
-        return 'privado'
+        return 'Privado'
     elif titularidad == 'C':
-        return 'concertado'
+        return 'Concertado'
     else:
         return None
 
 for centro in data:
+    if centro['cpcen'] == "":
+        codigo_postal = None
+    else: codigo_postal = centro['cpcen']
+
     codigo_localidad = int(centro['cpcen']) if centro.get('cpcen') and centro['cpcen'].isdigit() else None
 
     cursor.execute('INSERT OR IGNORE INTO Provincia VALUES (?, ?)', (30, 'Murcia'))
@@ -62,12 +66,12 @@ for centro in data:
     centro['denLarga'] + ' ' + centro['dencen'],
     obtener_tipo(centro['titularidad']),
     centro['domcen'],
-    centro['cpcen'],
+    codigo_postal,
     centro['geo-referencia']['lon'],
     centro['geo-referencia']['lat'],
     centro['telcen'],
     centro['presentacionCorta'] + ' ' + centro['web'],
-    centro['cpcen']
+    codigo_localidad
 ))
 
 conn.commit()

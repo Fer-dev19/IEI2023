@@ -74,7 +74,7 @@ with open('../archivosJSON/CAT.json', 'r', encoding='utf-8') as json_file:
             entry['codi_postal'],
             float(entry['coordenades_geo_x']),
             float(entry['coordenades_geo_y']),
-            '0',
+            None,
             descripcion_centro,
             codigo_localidad
         )
