@@ -64,7 +64,11 @@ with open('../archivosJSON/CAT.json', 'r', encoding='utf-8') as json_file:
         insert_provincia(codigo_provincia, nombre_provincia)
         insert_localidad(codigo_localidad, entry['nom_municipi'], codigo_provincia)
 
-        tipo_centro = 'Público' if entry['nom_naturalesa'] == 'Públic' else 'Privado'
+        if entry['nom_naturalesa'] == 'Públic':
+            tipo_centro = 'Público'
+        elif entry['nom_naturalesa'] == 'Privat':
+            tipo_centro = 'Privado'
+        else: tipo_centro = None
         descripcion_centro = f"{entry['estudis']}, {entry['nom_titularitat']}"
 
         insert_centro_educativo(
