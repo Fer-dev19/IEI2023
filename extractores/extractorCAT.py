@@ -59,6 +59,16 @@ with open('../archivosJSON/CAT.json', 'r', encoding='utf-8') as json_file:
             '43': 'Tarragona'
         }.get(str(codigo_provincia), 'Desconocida')
 
+        if entry['coordenades_geo_x'] == None:
+            coordenadas_x = None
+        else:
+            coordenadas_x = float(entry['coordenades_geo_x'])
+        
+        if entry['coordenades_geo_y'] == None:
+            coordenadas_y = None
+        else:
+            coordenadas_y = float(entry['coordenades_geo_y'])
+
         codigo_localidad = int(entry['codi_municipi_6_digits']) if len(entry['codi_municipi_6_digits']) == 6 else int('0' + entry['codi_municipi_6_digits'][:5])
 
         insert_provincia(codigo_provincia, nombre_provincia)
@@ -76,8 +86,8 @@ with open('../archivosJSON/CAT.json', 'r', encoding='utf-8') as json_file:
             tipo_centro,
             entry['adre_a'],
             entry['codi_postal'],
-            float(entry['coordenades_geo_x']),
-            float(entry['coordenades_geo_y']),
+            coordenadas_x,
+            coordenadas_y,
             None,
             descripcion_centro,
             codigo_localidad

@@ -80,7 +80,7 @@ url = "https://www.coordenadas-gps.com/"
 driver.get(url)
 time.sleep(3)
 for centro in data:
-    if centro['TELEFONO'] == "":
+    if centro['TELEFONO'] == "" or len(centro["TELEFONO"]) != 9:
         telefono = None
     else: telefono = centro['TELEFONO']
 
