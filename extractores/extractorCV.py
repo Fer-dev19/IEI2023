@@ -60,7 +60,7 @@ def searchDir(direc):
     address_input.clear()  
     direc += ", Valencia, España"
     address_input.send_keys(direc)
-
+    time.sleep(2)
     button = driver.find_element(By.XPATH, "//button[contains(text(), 'Obtener Coordenadas GPS')]")
     button.click()
     time.sleep(3)
