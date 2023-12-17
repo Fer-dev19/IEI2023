@@ -3,6 +3,7 @@ import json
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 import time
+import gps_scraper
 
 def conectar_a_base_datos(ruta_db):
     return sqlite3.connect(ruta_db)
@@ -58,38 +59,41 @@ def obtener_tipo(regimen):
         'OTROS': 'Otros'
     }.get(regimen, None)
 
-def configurar_navegador():
-    options = webdriver.ChromeOptions()
-    options.add_experimental_option("detach", True)
-    driver = webdriver.Chrome(options=options)
-    return driver
+# def configurar_navegador():
+#     options = webdriver.ChromeOptions()
+#     options.add_experimental_option("detach", True)
+#     driver = webdriver.Chrome(options=options)
+#     return driver
 
-def obtener_coordenadas(driver, direccion):
-    driver.get("https://www.coordenadas-gps.com/")
-    time.sleep(3)
-    address_input = driver.find_element(By.ID, "address")
-    address_input.clear()  
-    address_input.send_keys(direccion + ", Valencia, España")
-    time.sleep(2)
-    button = driver.find_element(By.XPATH, "//button[contains(text(), 'Obtener Coordenadas GPS')]")
-    button.click()
-    time.sleep(3)
-    latitude_input = driver.find_element(By.ID, "latitude")
-    longitude_input = driver.find_element(By.ID, "longitude")
-    return float(latitude_input.get_attribute("value")), float(longitude_input.get_attribute("value"))
+# def obtener_coordenadas(driver, direccion):
+#     driver.get("https://www.coordenadas-gps.com/")
+#     time.sleep(3)
+#     address_input = driver.find_element(By.ID, "address")
+#     address_input.clear()  
+#     address_input.send_keys(direccion + ", Valencia, España")
+#     time.sleep(2)
+#     button = driver.find_element(By.XPATH, "//button[contains(text(), 'Obtener Coordenadas GPS')]")
+#     button.click()
+#     time.sleep(3)
+#     latitude_input = driver.find_element(By.ID, "latitude")
+#     longitude_input = driver.find_element(By.ID, "longitude")
+#     return float(latitude_input.get_attribute("value")), float(longitude_input.get_attribute("value"))
 
 def procesar_datos(conn, driver, data):
     for centro in data:
-        longitud, latitud = obtener_coordenadas(driver, centro['DIRECCION'])
+        #longitud, latitud = obtener_coordenadas(driver, centro['DIRECCION'])
+        gps_scraper.setup_search(driver, centro['DIRECCION'] + ", Valencia, España")
+        latitude = gps_scraper.get_latitude(driver)
+        longitude = gps_scraper.get_longitude(driver)
         insertar_provincia(conn, centro['CODIGO_POSTAL'][:2], centro['PROVINCIA'])
         insertar_localidad(conn, centro['CODIGO_POSTAL'], centro['LOCALIDAD'], centro['CODIGO_POSTAL'][:2])
-        insertar_centro_educativo(conn, centro, longitud, latitud)
+        insertar_centro_educativo(conn, centro, longitude, latitude)
 
 # Lógica principal
 ruta_db = '../baseDatos.db'
 conn = conectar_a_base_datos(ruta_db)
 crear_tablas(conn)
-driver = configurar_navegador()
+driver = gps_scraper.setup_browser()
 data = leer_archivo_json('../archivosJSON/CV.json')
 procesar_datos(conn, driver, data)
 driver.quit()
