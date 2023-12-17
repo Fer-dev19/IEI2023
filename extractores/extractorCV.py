@@ -80,9 +80,11 @@ def obtener_tipo(regimen):
 #     return float(latitude_input.get_attribute("value")), float(longitude_input.get_attribute("value"))
 
 def procesar_datos(conn, driver, data):
+    gps_scraper.setup_search(driver)
     for centro in data:
         #longitud, latitud = obtener_coordenadas(driver, centro['DIRECCION'])
-        gps_scraper.setup_search(driver, centro['DIRECCION'] + ", Valencia, España")
+        gps_scraper.search(driver, centro['TIPO_VIA']+ " " + centro['DIRECCION'] + ", " + centro['NUMERO'] + ", " + centro['CODIGO_POSTAL'] + ", " + centro['LOCALIDAD'])
+        time.sleep(1)
         latitude = gps_scraper.get_latitude(driver)
         longitude = gps_scraper.get_longitude(driver)
         insertar_provincia(conn, centro['CODIGO_POSTAL'][:2], centro['PROVINCIA'])

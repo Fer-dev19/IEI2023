@@ -22,19 +22,25 @@ def setup_browser():
     driver = webdriver.Firefox(service=service, options=firefox_options)
     return driver
 
-def setup_search(driver, direc):
+def setup_search(driver):
     driver.get("https://www.coordenadas-gps.com/")
+    
+
+def search(driver, direc):
     address_input = WebDriverWait(driver, 10).until(
         EC.presence_of_element_located((By.ID, "address"))
     )
-    driver.execute_script("arguments[0].scrollIntoView();", address_input)
+    #driver.execute_script("arguments[0].scrollIntoView();", address_input)
+    driver.execute_script("window.scrollTo(0, 600);")
     time.sleep(1)
     address_input.clear()  
     time.sleep(1)
     address_input.send_keys(direc)
+    time.sleep(1)
     button = WebDriverWait(driver, 10).until(
         EC.element_to_be_clickable((By.XPATH, "//button[contains(text(), 'Obtener Coordenadas GPS')]"))
     )
+    time.sleep(1)
     driver.execute_script("window.scrollTo(0, 400);")
     time.sleep(1)
     button.click()
