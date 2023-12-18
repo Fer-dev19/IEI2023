@@ -2,13 +2,6 @@ import csv
 import json
 
 def convertir_csv_a_json():
-    """
-    Lee un archivo CSV y lo convierte en un archivo JSON.
-
-    Args:
-    archivo_csv (str): Ruta al archivo CSV de entrada.
-    archivo_json_salida (str): Ruta al archivo JSON de salida.
-    """
     archivo_csv = './archivosEntrada/CV.csv'
     archivo_json_salida = './archivosJSON/CV.json'
     try:

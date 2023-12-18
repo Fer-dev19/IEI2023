@@ -1,4 +1,6 @@
 from extractores.extractorCV import ExtractorCV
+from extractores.extractorCAT import ExtractorCAT
+from extractores.extractorMUR import ExtractorMUR
 from extractores.gps_scraper import GpsScraper
 from wrappers import wrapperCSV, wrapperXML
 
@@ -14,5 +16,12 @@ def cargar_datos(seleccion):
             wrapperCSV.convertir_csv_a_json()
             extractor = ExtractorCV('./baseDatos.db', './archivosJSON/CV.json')
             extractor.ejecutar()
+        elif comunidad == "Cataluña":
+            wrapperXML.convertir_xml_a_json()
+            extractor = ExtractorCAT('./baseDatos.db', './archivosJSON/CAT.json')
+            extractor.ejecutar()
+        elif comunidad == "Murcia":
+            extractor = ExtractorMUR('./baseDatos.db', './archivosJSON/MUR.json')
+            extractor.ejecutar()
 
-cargar_datos(["Valencia"])
+cargar_datos(["Cataluña"])

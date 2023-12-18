@@ -1,10 +1,9 @@
 import xml.etree.ElementTree as ET
 import json
 
-import xml.etree.ElementTree as ET
-import json
-
-def convertir_xml_a_json(archivo_xml, archivo_json_salida):
+def convertir_xml_a_json():
+    archivo_xml = './archivosEntrada/CAT.xml'
+    archivo_json_salida = './archivosJSON/CV.json'
     try:
         tree = ET.parse(archivo_xml)
         root = tree.getroot()
