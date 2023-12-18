@@ -57,7 +57,7 @@ class ExtractorCV:
         with open(self.json_path, 'r', encoding='utf-8') as file:
             self.data = json.load(file)
 
-    def obtener_tipo(regimen):
+    def obtener_tipo(self, regimen):
         return {
             'PÚB.': 'Público',
             'PRIV. CONC.': 'Concertado',
@@ -73,9 +73,9 @@ class ExtractorCV:
             time.sleep(1)
             latitude = GpsScraper.get_latitude(self.driver)
             longitude = GpsScraper.get_longitude(self.driver)
-            self.insertar_provincia(self.conn, centro['CODIGO_POSTAL'][:2], centro['PROVINCIA'])
-            self.insertar_localidad(self.conn, centro['CODIGO_POSTAL'], centro['LOCALIDAD'], centro['CODIGO_POSTAL'][:2])
-            self.insertar_centro_educativo(self.conn, centro, longitude, latitude)
+            self.insertar_provincia(centro['CODIGO_POSTAL'][:2], centro['PROVINCIA'])
+            self.insertar_localidad(centro['CODIGO_POSTAL'], centro['LOCALIDAD'], centro['CODIGO_POSTAL'][:2])
+            self.insertar_centro_educativo(centro, longitude, latitude)
     
     def ejecutar(self):
         try:
