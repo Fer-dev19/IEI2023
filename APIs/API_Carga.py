@@ -23,5 +23,3 @@ def cargar_datos(seleccion):
         elif comunidad == "Murcia":
             extractor = ExtractorMUR('./baseDatos.db', './archivosJSON/MUR.json')
             extractor.ejecutar()
-
-cargar_datos(["Seleccionar todas"])
