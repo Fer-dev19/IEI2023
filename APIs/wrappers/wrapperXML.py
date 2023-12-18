@@ -3,7 +3,7 @@ import json
 
 def convertir_xml_a_json():
     archivo_xml = './archivosEntrada/CAT.xml'
-    archivo_json_salida = './archivosJSON/CV.json'
+    archivo_json_salida = './archivosJSON/CAT.json'
     try:
         tree = ET.parse(archivo_xml)
         root = tree.getroot()

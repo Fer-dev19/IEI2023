@@ -24,4 +24,4 @@ def cargar_datos(seleccion):
             extractor = ExtractorMUR('./baseDatos.db', './archivosJSON/MUR.json')
             extractor.ejecutar()
 
-cargar_datos(["Cataluña"])
+cargar_datos(["Seleccionar todas"])
