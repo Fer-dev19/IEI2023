@@ -12,7 +12,7 @@ def main():
     boton_busqueda.pack(pady=10)
 
     # Botón para abrir la interfaz de carga
-    boton_carga = tk.Button(root, text="Abrir Interfaz de Carga", command=abrir_interfaz_carga)
+    boton_carga = tk.Button(root, text="Abrir Interfaz de Carga", command=lambda: abrir_interfaz_carga(root))
     boton_carga.pack(pady=10)
 
     root.mainloop()

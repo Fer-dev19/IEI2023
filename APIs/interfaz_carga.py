@@ -5,7 +5,7 @@ import threading
 # Suponiendo que 'cargar_datos' es la función de tu API que deseas llamar
 from API_Carga import cargar_datos
 
-def abrir_interfaz_carga():
+def abrir_interfaz_carga(parent_root):
 
     def iniciar_carga(comunidades, resultados_carga):
         # Ejecuta la carga de datos en un hilo separado para no bloquear la GUI
@@ -29,12 +29,12 @@ def abrir_interfaz_carga():
         resultados_carga.delete(1.0, tk.END)  # Limpiar el área de texto
         iniciar_carga(seleccionadas, resultados_carga)
 
-    root = tk.Tk()
-    root.title("Carga del almacén de datos")
-    root.geometry("800x600")  # Ancho x Alto
+    ventana_carga = tk.Toplevel(parent_root)
+    ventana_carga.title("Carga del almacén de datos")
+    ventana_carga.geometry("800x600")  # Ancho x Alto
 
     # Frame para contener todos los elementos y centrarlos
-    frame = tk.Frame(root)
+    frame = tk.Frame(ventana_carga)
     frame.pack(expand=True)
 
     # Diccionario para almacenar las variables de las casillas de verificación
@@ -59,7 +59,7 @@ def abrir_interfaz_carga():
     boton_cargar.pack(side=tk.LEFT, padx=10, pady=20)
 
     # Botón 'Cancelar'
-    boton_cancelar = tk.Button(frame, text="Cancelar", command=root.quit)
+    boton_cancelar = tk.Button(frame, text="Cancelar", command=ventana_carga.quit)
     boton_cancelar.pack(side=tk.RIGHT, padx=10, pady=20)
 
     # Área de texto con barras de desplazamiento para mostrar los resultados
@@ -67,4 +67,4 @@ def abrir_interfaz_carga():
     resultados_carga.pack(pady=10)
 
     # Ejecutar la GUI
-    root.mainloop()
+    ventana_carga.mainloop()
