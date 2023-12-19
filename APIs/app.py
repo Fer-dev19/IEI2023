@@ -1,28 +1,21 @@
 import tkinter as tk
-from interfaz_busqueda import BuscadorCentrosEducativos
-from interfaz_carga import CargaDatos
+from interfaz_busqueda import abrir_interfaz_busqueda
+from interfaz_carga import abrir_interfaz_carga
 
-class AplicacionPrincipal(tk.Tk):
-    def __init__(self):
-        super().__init__()
-        self.title("Aplicación Principal")
-        self.geometry("1200x675")
+def main():
+    root = tk.Tk()
+    root.title("Aplicación Principal")
+    root.geometry("300x200")
 
-        # Inicializar la primera interfaz
-        self.mostrar_buscador_centros()
+    # Botón para abrir la interfaz de búsqueda
+    boton_busqueda = tk.Button(root, text="Abrir Interfaz de Búsqueda", command=abrir_interfaz_busqueda)
+    boton_busqueda.pack(pady=10)
 
-    def mostrar_buscador_centros(self):
-        # Mostrar la interfaz del buscador de centros educativos
-        frame = BuscadorCentrosEducativos(self, self.mostrar_carga_datos)
-        frame.grid(row=0, column=0, sticky="nsew")
-        frame.tkraise()
+    # Botón para abrir la interfaz de carga
+    boton_carga = tk.Button(root, text="Abrir Interfaz de Carga", command=abrir_interfaz_carga)
+    boton_carga.pack(pady=10)
 
-    def mostrar_carga_datos(self):
-        # Mostrar la interfaz de carga de datos
-        frame = CargaDatos(self, self.mostrar_buscador_centros)
-        frame.grid(row=0, column=0, sticky="nsew")
-        frame.tkraise()
+    root.mainloop()
 
 if __name__ == "__main__":
-    app = AplicacionPrincipal()
-    app.mainloop()
+    main()
