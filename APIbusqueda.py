@@ -8,7 +8,13 @@ def getCentros():
 
     conn = sqlite3.connect('./APIs/baseDatos.db')
     cursor = conn.cursor()
-    consultaSQL = "SELECT * FROM Centro_Educativo"
+    
+    consultaSQL = """
+    SELECT CE.*, L.nombre AS nombre_localidad, P.nombre AS nombre_provincia
+    FROM Centro_Educativo CE
+    JOIN Localidad L ON CE.localidad = L.codigo
+    JOIN Provincia P ON L.provincia = P.codigo
+    """
     cursor.execute(consultaSQL)
     resultados = cursor.fetchall()   
     conn.close()
@@ -25,7 +31,8 @@ def getCentros():
                 'latitud': resultado[5],
                 'telefono': resultado[6],
                 'descripcion': resultado[7],
-                'localidad': resultado[8]
+                'localidad': resultado[9],
+                'provincia': resultado[10]
             }
             resultadosList.append(resultadoDict)
         
