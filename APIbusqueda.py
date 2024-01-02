@@ -3,23 +3,49 @@ import sqlite3
 
 app = Flask(__name__)
 
+@app.route('/getCentros', methods=['GET'])
+def getCentros():
+
+    conn = sqlite3.connect('./APIs/baseDatos.db')
+    cursor = conn.cursor()
+    consultaSQL = "SELECT * FROM Centro_Educativo"
+    cursor.execute(consultaSQL)
+    resultados = cursor.fetchall()   
+    conn.close()
+
+    if resultados:
+        resultadosList = []
+        for resultado in resultados:
+            resultadoDict = {
+                'nombre': resultado[0],
+                'tipo': resultado[1],
+                'direccion': resultado[2],
+                'codigo_postal': resultado[3],
+                'longitud': resultado[4],
+                'latitud': resultado[5],
+                'telefono': resultado[6],
+                'descripcion': resultado[7],
+                'localidad': resultado[8]
+            }
+            resultadosList.append(resultadoDict)
+        
+    return jsonify(resultadosList)
+
+
 @app.route('/buscar', methods=['GET'])
 def megaMetodo():
     
-    #Obtención de parámetros
     localidad = request.args.get('localidad')
     codPostal = request.args.get('codPostal')
     provincia = request.args.get('provincia')
     tipo = request.args.get('tipo')
 
-    #Conexión a la bd
     conn = sqlite3.connect('./APIs/baseDatos.db')
     cursor = conn.cursor()
 
     if not (localidad or codPostal or provincia or tipo):
         return jsonify({'error': 'No se ha proporcionado ningún parámetro'}), 400 
     
-    #Consulta inicial que junta las tablas
     consultaSQL = """
     SELECT CE.*, L.nombre AS nombre_localidad, P.nombre AS nombre_provincia
     FROM Centro_Educativo CE
@@ -29,7 +55,6 @@ def megaMetodo():
     """
     parametros = []
 
-#Aplicación de filtros
     if localidad:
         consultaSQL += " AND LOWER(L.nombre) LIKE ?"
         parametros.append('%' + localidad.lower() + '%') 
@@ -48,7 +73,7 @@ def megaMetodo():
     cursor.execute(consultaSQL, parametros)
     resultados = cursor.fetchall()   
     conn.close()
-    # Almacenamiento y retorno de los resultados
+    
     if resultados:
         resultadosList = []
         for resultado in resultados:

@@ -1,10 +1,9 @@
 
 import requests
 
-url = 'http://127.0.0.1:5000/buscar'
+url = 'http://127.0.0.1:5000/getCentros'
 # Parámetros a pasar
-params = {'localidad': "a", 'tipo': "Concertado"}
-response = requests.get(url, params=params)
+response = requests.get(url)
 
 if response.status_code == 200:
     localidad = response.json()
