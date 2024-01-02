@@ -4,9 +4,54 @@ import interfaz_carga
 
 
 def buscar():
+
+    def mostrarDatos(marker):
+        localidadInput.delete(0, tk.END)
+        provinciaInput.delete(0, tk.END)
+        codPostalInput.delete(0, tk.END)
+        print(marker.data)
+        for centro in centros:
+            if centro.get('nombre') == marker.data:
+                localidadInput.insert(tk.END,centro.get('localidad'))
+                codPostalInput.insert(tk.END, centro.get('codigo_postal'))
+                provinciaInput.insert(tk.END, centro.get('provincia'))
+                for tipo in tipoOptions:
+                    if centro.get('tipo') == tipo:
+                        variableControlTipo.set(tipo)
+                        break
+                break
+
     url = 'http://127.0.0.1:5000/buscar'
     #Peticioon para obtener todos los centros
+    params = {'provincia': "Barcelona"}
+    response = requests.get(url, params=params)
+    if response.status_code == 200:
+        centros = response.json()
 
+        for centro in centros:
+            # Accediendo a los atributos específicos de cada localidad
+            nombre = centro.get('nombre', 'Nombre no disponible')
+            codPostal = centro.get('codigo_postal', 'Codigo postal no disponible')
+            localidad_nombre = centro.get('localidad', 'Localidad no disponible')
+            provincia = centro.get('provincia', 'Provincia no disponible')
+            direccion = centro.get('direccion', 'Dirección no disponible')
+            tipo = centro.get('tipo', 'Tipo no disponible')
+            latitud = centro.get('latitud', 'Latitud no disponible')
+            longitud = centro.get('longitud', 'Longitud no disponible')
+
+            #Estableciendo marcadores
+            if latitud is not None and longitud is not None:
+                map_widget.set_marker(latitud,longitud,nombre,data=nombre,command=mostrarDatos)
+
+            # Formateando la cadena para mostrar la información deseada
+            info_localidad = f"Nombre: {nombre}, Localidad: {localidad_nombre}, Provincia: {provincia}, Dirección: {direccion}\n"
+
+            # Insertando la cadena en resultText
+            resultText.insert(tk.END, info_localidad)
+    elif response.status_code == 404:
+        resultText.insert(tk.END,"No hay resultados")
+    else:
+        resultText.insert(tk.END, "Error")
 
 
 def cargar():
@@ -28,8 +73,8 @@ etiqueta = tk.Label(ventana, text="Buscador de centros educativos", font=("Arial
 etiqueta.place(x=400, y=60)
 
 # Crear una variable de control para el menú
-variable = tk.StringVar(ventana)
-variable.set("Público")  # Opción predeterminada
+variableControlTipo = tk.StringVar(ventana)
+variableControlTipo.set("Público")  # Opción predeterminada
 
 # Establecer pares etiqueta e inputText
 localidad = tk.Label(ventana, text="Localidad:", font=("Arial", 16))
@@ -46,7 +91,8 @@ provinciaInput = tk.Entry(ventana)
 provinciaInput.place(x=400, y=180)
 tipo = tk.Label(ventana, text="Tipo:", font=("Arial", 16))
 tipo.place(x=335, y=210)
-tipoInput = tk.OptionMenu(ventana, variable, "Público", "Privado", "Concertado", "Otros")
+tipoOptions = ["Público", "Privado", "Concertado", "Otros"]
+tipoInput = tk.OptionMenu(ventana, variableControlTipo,tipoOptions[0], *tipoOptions)
 tipoInput.place(x=400, y=210)
 resultLabel = tk.Label(ventana, text="Resultados de la Busqueda:", font=("Arial", 16))
 resultLabel.place(x=300, y=400)
@@ -74,10 +120,6 @@ map_widget.place(x=800, y=275, anchor=tk.CENTER)
 # set current widget position and zoom
 map_widget.set_position(40.417278703578596, -3.701168707505883)  # Madrid, Spain
 map_widget.set_zoom(10)
-
-#Set marker
-valenciaMarker = map_widget.set_marker(39.470521371697444, -0.3732021976957829, text="Valencia Ciudad")
-
 
 # Iniciar el bucle de eventos
 ventana.mainloop()
