@@ -25,6 +25,14 @@ class GpsScraper:
 
     def setup_search(driver):
         driver.get("https://www.coordenadas-gps.com/")
+        # Aceptar cookies
+        try:
+            boton_consentir = WebDriverWait(driver, 10).until(
+                EC.element_to_be_clickable((By.XPATH, "/html/body/div[4]/div[2]/div[1]/div[2]/div[2]/button[1]"))
+            )
+            boton_consentir.click()
+        except Exception as e:
+            print("No se pudo encontrar el botón de consentimiento de cookies:", e)
         
 
     def search(driver, direc):

@@ -1,3 +1,10 @@
+# from extractores.extractorCV import ExtractorCV
+# from wrappers import wrapperCSV, wrapperXML
+
+# wrapperCSV.convertir_csv_a_json()
+# extractor = ExtractorCV('./baseDatos.db', './archivosJSON/CV.json')
+# extractor.ejecutar()
+
 import requests
 
 url = 'http://localhost:5003/cargar_datos'  # Reemplaza con la URL correcta de tu API
