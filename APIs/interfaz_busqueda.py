@@ -21,7 +21,7 @@ def buscar():
                         break
                 break
 
-    url = 'http://127.0.0.1:5000/getCentros'
+    url = 'http://127.0.0.1:5004/getCentros'
     #Peticioon para obtener todos los centros
     params = {'provincia': "Barcelona"}
     response = requests.get(url)

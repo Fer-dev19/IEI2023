@@ -1,9 +1,10 @@
 import tkinter as tk
 from tkinter import messagebox, scrolledtext
 import threading
+import requests
 
 # Suponiendo que 'cargar_datos' es la función de tu API que deseas llamar
-from API_Carga import cargar_datos
+#from API_Carga import cargar_datos
 
 def abrir_interfaz_carga(parent_root):
 
@@ -11,8 +12,18 @@ def abrir_interfaz_carga(parent_root):
         # Ejecuta la carga de datos en un hilo separado para no bloquear la GUI
         def carga():
             try:
-                cargar_datos(comunidades)
-                resultados_carga.insert(tk.END, "Los datos han sido cargados con éxito.\n")
+                url = 'http://127.0.0.1:5003/cargar_datos'
+                #Peticioon para cargar los datos
+                data = {
+                    'seleccion': comunidades  # Ajusta esta lista según las comunidades que quieras cargar
+                }
+                response = requests.post(url, json=data)
+
+                #cargar_datos(comunidades)
+                if response.status_code == 200:
+                    resultados_carga.insert(tk.END, "Los datos han sido cargados con éxito.\n")
+                else:
+                    resultados_carga.insert(tk.END, f"Error al cargar los datos: {response.status_code} {response.text}\n")
             except Exception as e:
                 resultados_carga.insert(tk.END, f"Ha ocurrido un error durante la carga: {e}\n")
 
