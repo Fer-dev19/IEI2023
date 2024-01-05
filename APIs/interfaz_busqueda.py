@@ -19,43 +19,40 @@ def filtrar():
                     if centro.get('tipo') == tipo:
                         variableControlTipo.set(tipo)
                         break
-    #No se han especificado filtros
-    if len(localidadInput.get()) < 1 and len(codPostalInput.get()) < 1 and len(provinciaInput.get()) < 1:
+
+    url = 'http://127.0.0.1:5004/buscar'
+    # Parámetros a pasar
+    params = {'localidad':localidadInput.get(),'codPostal': codPostalInput.get(), 'provincia':provinciaInput.get(), 'tipo': variableControlTipo.get()}
+    response = requests.get(url, params=params)
+
+    if response.status_code == 200:
+        map_widget.delete_all_marker()
         resultTable.delete(*resultTable.get_children())
-        cargarMarcadores()
-    #Se han especificado filtros
+        centros = response.json()
+        for centro in centros:
+            nombre = centro.get('nombre', 'Nombre no disponible')
+            codPostal = centro.get('codigo_postal', 'Codigo postal no disponible')
+            localidad = centro.get('localidad', 'Localidad no disponible')
+            provincia = centro.get('provincia', 'Provincia no disponible')
+            direccion = centro.get('direccion', 'Dirección no disponible')
+            tipo = centro.get('tipo', 'Tipo no disponible')
+            latitud = centro.get('latitud', 'Latitud no disponible')
+            longitud = centro.get('longitud', 'Longitud no disponible')
+            telefono = centro.get('telefono', 'Teléfono no disponible')
+            descripcion = centro.get('descripcion', 'Descripción no disponible')
+
+            if latitud is not None and longitud is not None:
+                map_widget.set_marker(latitud, longitud, nombre, data=nombre, command=mostrarDatos)
+
+            info_localidad = f"Nombre: {nombre}, Localidad: {localidad}, Provincia: {provincia}, Dirección: {direccion}\n"
+            resultTable.insert('', tk.END, values=(
+            nombre, tipo, direccion, codPostal, telefono, descripcion, localidad, provincia))
+    elif response.status_code == 404:
+        print('Localidad no encontrada')
+        resultTable.delete(*resultTable.get_children())
+        resultTable.insert('', tk.END, values=('no hay resultados'))
     else:
-        url = 'http://127.0.0.1:5004/buscar'
-        # Parámetros a pasar
-        params = {'localidad':localidadInput.get(),'codPostal': codPostalInput.get(), 'provincia':provinciaInput.get()}
-        response = requests.get(url, params=params)
-
-        if response.status_code == 200:
-            map_widget.delete_all_marker()
-            resultTable.delete(*resultTable.get_children())
-            centros = response.json()
-            for centro in centros:
-                nombre = centro.get('nombre', 'Nombre no disponible')
-                codPostal = centro.get('codigo_postal', 'Codigo postal no disponible')
-                localidad = centro.get('localidad', 'Localidad no disponible')
-                provincia = centro.get('provincia', 'Provincia no disponible')
-                direccion = centro.get('direccion', 'Dirección no disponible')
-                tipo = centro.get('tipo', 'Tipo no disponible')
-                latitud = centro.get('latitud', 'Latitud no disponible')
-                longitud = centro.get('longitud', 'Longitud no disponible')
-                telefono = centro.get('telefono', 'Teléfono no disponible')
-                descripcion = centro.get('descripcion', 'Descripción no disponible')
-
-                if latitud is not None and longitud is not None:
-                    map_widget.set_marker(latitud, longitud, nombre, data=nombre, command=mostrarDatos)
-
-                info_localidad = f"Nombre: {nombre}, Localidad: {localidad}, Provincia: {provincia}, Dirección: {direccion}\n"
-                resultTable.insert('', tk.END, values=(
-                nombre, tipo, direccion, codPostal, telefono, descripcion, localidad, provincia))
-        elif response.status_code == 404:
-            print('Localidad no encontrada')
-        else:
-            print(f'Error en la solicitud: {response.status_code}')
+        print(f'Error en la solicitud: {response.status_code}')
 
 def cargarMarcadores():
     def mostrarDatos(marker):
@@ -125,7 +122,7 @@ for i, label in enumerate(labels):
 
 localidadInput, codPostalInput, provinciaInput = entries
 
-tipoOptions = ["Público","Privado", "Concertado", "Otros"]
+tipoOptions = ["Público","Privado", "Concertado", "Otros", "Todos"]
 variableControlTipo = tk.StringVar(ventana)
 variableControlTipo.set(tipoOptions[0])
 tipoInput = tk.OptionMenu(frame_inputs, variableControlTipo, tipoOptions[0], *tipoOptions)
