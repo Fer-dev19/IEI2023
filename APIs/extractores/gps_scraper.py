@@ -41,19 +41,19 @@ class GpsScraper:
         )
         #driver.execute_script("arguments[0].scrollIntoView();", address_input)
         driver.execute_script("window.scrollTo(0, 600);")
-        time.sleep(1)
+        time.sleep(0.5)
         address_input.clear()  
-        time.sleep(1)
+        time.sleep(0.5)
         address_input.send_keys(direc)
-        time.sleep(1)
+        time.sleep(0.5)
         button = WebDriverWait(driver, 10).until(
             EC.element_to_be_clickable((By.XPATH, "//button[contains(text(), 'Obtener Coordenadas GPS')]"))
         )
-        time.sleep(1)
+        time.sleep(0.5)
         driver.execute_script("window.scrollTo(0, 400);")
-        time.sleep(1)
+        time.sleep(0.5)
         button.click()
-        time.sleep(1)
+        time.sleep(0.5)
 
     def get_latitude(driver):
         latitude_input = WebDriverWait(driver, 10).until(
