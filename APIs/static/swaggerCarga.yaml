@@ -1,0 +1,49 @@
+swagger: '2.0'
+info:
+  title: API de Carga de Datos
+  version: "1.0.0"
+  description: API para cargar los datos de diferentes comunidades en la base de  datos.
+host: 'localhost:5003'
+basePath: '/'
+schemes:
+  - http
+
+paths:
+  /cargar_datos:
+    post:
+      summary: Carga datos de las comunidades especificadas
+      description: Permite cargar datos de una o más comunidades.
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Comunidades a cargar
+          required: true
+          schema:
+            type: object
+            properties:
+              seleccion:
+                type: array
+                items:
+                  type: string
+                example: ["Valencia", "Cataluña"]
+      responses:
+        200:
+          description: Datos cargados correctamente
+          schema:
+            type: object
+            properties:
+              mensaje:
+                type: string
+                example: "Datos cargados correctamente"
+        400:
+          description: Error en la solicitud
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "No se ha seleccionado ninguna comunidad"

@@ -1,7 +1,18 @@
 from flask import Flask, request, jsonify
 import sqlite3
+from flasgger import Swagger
+from flask_swagger_ui import get_swaggerui_blueprint
 
 app = Flask(__name__)
+
+SWAGGER_URL = '/swagger'
+API_URL = '/static/swaggerBusqueda.yaml' 
+swaggerui_blueprint = get_swaggerui_blueprint(
+    SWAGGER_URL,
+    API_URL,
+    config={'app_name': "API de búsqueda de centros"}
+)
+app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
 
 @app.route('/getCentros', methods=['GET'])
 def getCentros():
