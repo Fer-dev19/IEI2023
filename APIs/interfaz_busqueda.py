@@ -21,8 +21,13 @@ def filtrar():
                         break
 
     url = 'http://127.0.0.1:5004/buscar'
+    tipo = ""
+    if variableControlTipo.get() != "Todos":
+        tipo = variableControlTipo.get()
+    else:
+        tipo = ""
     # Parámetros a pasar
-    params = {'localidad':localidadInput.get(),'codPostal': codPostalInput.get(), 'provincia':provinciaInput.get(), 'tipo': variableControlTipo.get()}
+    params = {'localidad':localidadInput.get(),'codPostal': codPostalInput.get(), 'provincia':provinciaInput.get(), 'tipo': tipo}
     response = requests.get(url, params=params)
 
     if response.status_code == 200:
@@ -158,6 +163,5 @@ map_widget.place(x=800, y=275, anchor=tk.CENTER)
 map_widget.set_position(40.417278703578596, -3.701168707505883)
 map_widget.set_zoom(6)
 
-cargarMarcadores()
 
 ventana.mainloop()
