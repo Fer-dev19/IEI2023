@@ -58,7 +58,7 @@ def megaMetodo():
     provincia = request.args.get('provincia')
     tipo = request.args.get('tipo')
 
-    conn = sqlite3.connect('./APIs/baseDatos.db')
+    conn = sqlite3.connect('./baseDatos.db')
     cursor = conn.cursor()
 
     if not (localidad or codPostal or provincia or tipo):
