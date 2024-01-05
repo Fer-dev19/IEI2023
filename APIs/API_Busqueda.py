@@ -6,7 +6,7 @@ app = Flask(__name__)
 @app.route('/getCentros', methods=['GET'])
 def getCentros():
 
-    conn = sqlite3.connect('./APIs/baseDatos.db')
+    conn = sqlite3.connect('./baseDatos.db')
     cursor = conn.cursor()
     
     consultaSQL = """
