@@ -70,12 +70,18 @@ def abrir_interfaz_carga(parent_root):
     boton_cargar.pack(side=tk.LEFT, padx=10, pady=20)
 
     # Botón 'Cancelar'
-    boton_cancelar = tk.Button(frame, text="Cancelar", command=ventana_carga.quit)
+    boton_cancelar = tk.Button(frame, text="Cancelar", command=ventana_carga.destroy)
     boton_cancelar.pack(side=tk.RIGHT, padx=10, pady=20)
 
     # Área de texto con barras de desplazamiento para mostrar los resultados
     resultados_carga = scrolledtext.ScrolledText(frame, height=10, width=50)
     resultados_carga.pack(pady=10)
+
+    # Hace que la ventana de carga sea una ventana modal
+    ventana_carga.grab_set()
+
+    # Espera a que la ventana de carga se cierre antes de continuar
+    ventana_carga.wait_window()
 
     # Ejecutar la GUI
     ventana_carga.mainloop()

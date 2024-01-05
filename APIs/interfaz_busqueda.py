@@ -77,7 +77,7 @@ tipoOptions = ["Público", "Privado", "Concertado", "Otros"]
 tipoInput = tk.OptionMenu(frame_inputs, variableControlTipo, tipoOptions[0], *tipoOptions)
 tipoInput.grid(row=3, column=1, sticky='w')
 
-cancelar = tk.Button(ventana, text="Cancelar")
+cancelar = tk.Button(ventana, text="Cancelar", command=ventana.destroy)
 cancelar.place(x=380, y=260)
 aceptar = tk.Button(ventana, text="Aceptar", command=buscar)
 aceptar.place(x=480, y=260)
