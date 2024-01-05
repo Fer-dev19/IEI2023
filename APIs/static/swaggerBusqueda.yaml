@@ -1,0 +1,69 @@
+swagger: '2.0'
+info:
+  title: API de búsqueda de centros
+  version: "1.0.0"
+  description: API obtener en formato JSON la información de los centros de la base de datos.
+host: 'localhost:5004'
+basePath: '/'
+schemes:
+  - http
+
+paths:
+  /getCentros:
+    get:
+      summary: Obtener todos los centros educativos de la base de datos.
+      description: Devuelve los datos de todos los centros disponibles en la base de datos.
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        200:
+          description: Devuelve una lista de centros educativos
+  /buscar:
+    get:
+      summary: Buscar un centro educativo en específico.
+      description: Devuelve los centros educativos en base a los parámetros proporcionados.      
+      parameters:
+        - name: localidad
+          in: query
+          type: string
+          required: false
+          description: Nombre de la localidad
+        - name: codPostal
+          in: query
+          type: string
+          required: false
+          description: Código postal del centro educativo
+        - name: provincia
+          in: query
+          type: string
+          required: false
+          description: Nombre de la provincia
+        - name: tipo
+          in: query
+          type: string
+          required: false
+          description: Tipo de centro educativo
+      responses:
+        200:
+          description: Lista de centros educativos que cumplen con los criterios
+          examples:
+            application/json: [
+              {
+                "nombre": "Instituto Educacional Ejemplo",
+                "tipo": "Secundaria",
+                "direccion": "Calle Falsa 123",
+                "codigo_postal": "28080",
+                "longitud": -3.7037902,
+                "latitud": 40.4167754,
+                "telefono": "912345678",
+                "descripcion": "Un instituto de ejemplo en la ciudad",
+                "localidad": "Madrid",
+                "provincia": "Madrid"
+              }
+            ]
+        400:
+          description: No se ha proporcionado ningún parámetro
+        404:
+          description: No se han encontrado resultados

@@ -4,11 +4,23 @@ from extractores.extractorMUR import ExtractorMUR
 from wrappers import wrapperCSV, wrapperXML
 from extractores.gps_scraper import GpsScraper
 from flask import Flask, request, jsonify
+from flasgger import Swagger
+from flask_swagger_ui import get_swaggerui_blueprint
 
 app = Flask(__name__)
 
+SWAGGER_URL = '/swagger'
+API_URL = '/static/swaggerCarga.yaml'
+swaggerui_blueprint = get_swaggerui_blueprint(
+    SWAGGER_URL,
+    API_URL,
+    config={'app_name': "API REST de carga"}
+)
+app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
+
 @app.route('/cargar_datos', methods=['POST'])
 def cargar_datos():
+    
     seleccion = request.json.get('seleccion')
     if not seleccion:
         return jsonify({'error': 'No se ha seleccionado ninguna comunidad'}), 400
