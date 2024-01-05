@@ -39,7 +39,6 @@ class GpsScraper:
         address_input = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.ID, "address"))
         )
-        #driver.execute_script("arguments[0].scrollIntoView();", address_input)
         driver.execute_script("window.scrollTo(0, 600);")
         time.sleep(0.5)
         address_input.clear()  
