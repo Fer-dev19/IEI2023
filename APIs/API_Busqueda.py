@@ -104,8 +104,9 @@ def buscar():
         parametros.append('%' + provincia.lower() + '%')
 
     if tipo:
-        consultaSQL += " AND CE.tipo = ?"
-        parametros.append(tipo)    
+        if tipo != 'Todos':
+            consultaSQL += " AND CE.tipo = ?"
+            parametros.append(tipo)
 
     # Ejecución de la consulta SQL con los parámetros proporcionados
     cursor.execute(consultaSQL, parametros)

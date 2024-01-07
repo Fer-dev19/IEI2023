@@ -21,13 +21,13 @@ def filtrar():
                         break
 
     url = 'http://127.0.0.1:5004/buscar'
-    tipo = ""
-    if variableControlTipo.get() != "Todos":
-        tipo = variableControlTipo.get()
-    else:
-        tipo = ""
+    # tipo = ""
+    # if variableControlTipo.get() != "Todos":
+    #     tipo = variableControlTipo.get()
+    # else:
+    #     tipo = ""
     # Parámetros a pasar
-    params = {'localidad':localidadInput.get(),'codPostal': codPostalInput.get(), 'provincia':provinciaInput.get(), 'tipo': tipo}
+    params = {'localidad':localidadInput.get(),'codPostal': codPostalInput.get(), 'provincia':provinciaInput.get(), 'tipo': variableControlTipo.get()}
     response = requests.get(url, params=params)
 
     if response.status_code == 200:
