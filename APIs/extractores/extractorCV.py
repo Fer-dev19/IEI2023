@@ -69,6 +69,11 @@ class ExtractorCV:
             'PRIV.': 'Privado',
             'OTROS': 'Otros'
         }.get(regimen, None)
+    
+    def acentoValencia(self, centro):
+        if centro['LOCALIDAD'] == 'VALÈNCIA':
+            return 'Valencia'
+        else: return centro['LOCALIDAD']
 
     def procesar_datos(self):
         self.crear_tablas()
@@ -86,7 +91,7 @@ class ExtractorCV:
 
             # Se llaman a los métodos para insertar los valores en la base de datos
             self.insertar_provincia(centro['CODIGO_POSTAL'][:2], centro['PROVINCIA'])
-            self.insertar_localidad(centro['CODIGO_POSTAL'], centro['LOCALIDAD'], centro['CODIGO_POSTAL'][:2])
+            self.insertar_localidad(centro['CODIGO_POSTAL'], self.acentoValencia(centro), centro['CODIGO_POSTAL'][:2])
             self.insertar_centro_educativo(centro, longitude, latitude)
     
     def ejecutar(self):
