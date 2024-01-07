@@ -76,6 +76,7 @@ class ExtractorCV:
         else: return centro['LOCALIDAD']
 
     def procesar_datos(self):
+        lineas_procesadas = 0
         self.crear_tablas()
         # Se llama a la clase para inicializar la búsqueda
         GpsScraper.setup_search(self.driver)
@@ -93,13 +94,16 @@ class ExtractorCV:
             self.insertar_provincia(centro['CODIGO_POSTAL'][:2], centro['PROVINCIA'])
             self.insertar_localidad(centro['CODIGO_POSTAL'], self.acentoValencia(centro), centro['CODIGO_POSTAL'][:2])
             self.insertar_centro_educativo(centro, longitude, latitude)
+            lineas_procesadas += 1
+        return lineas_procesadas
     
     def ejecutar(self):
         try:
             self.conectar_a_base_datos()
             self.leer_archivo_json()
             self.driver = GpsScraper.setup_browser()
-            self.procesar_datos()
+            lineas_procesadas = self.procesar_datos()
+            return lineas_procesadas
         finally:
             if self.driver:
                 self.driver.quit()

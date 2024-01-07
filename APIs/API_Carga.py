@@ -31,18 +31,19 @@ def cargar_datos():
         comunidades = seleccion
 
     for comunidad in comunidades:
+        lineas_procesadas = 0
         if comunidad == "Valencia":
             wrapperCSV.convertir_csv_a_json()
             extractor = ExtractorCV('./baseDatos.db', './archivosJSON/CV.json')
-            extractor.ejecutar()
+            lineas_procesadas += extractor.ejecutar()
         elif comunidad == "Cataluña":
             wrapperXML.convertir_xml_a_json()
             extractor = ExtractorCAT('./baseDatos.db', './archivosJSON/CAT.json')
-            extractor.ejecutar()
+            lineas_procesadas += extractor.ejecutar()
         elif comunidad == "Murcia":
             extractor = ExtractorMUR('./baseDatos.db', './archivosJSON/MUR.json')
-            extractor.ejecutar()
-    return jsonify({'mensaje': 'Datos cargados correctamente'}), 200
+            lineas_procesadas += extractor.ejecutar()
+    return jsonify({'mensaje': "Carga completada", "lineas_procesadas": lineas_procesadas}), 200
 
 if __name__ == '__main__':
     app.run(debug=True, port=5003)
