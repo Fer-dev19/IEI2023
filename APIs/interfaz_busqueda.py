@@ -20,6 +20,24 @@ def filtrar():
                         variableControlTipo.set(tipo)
                         break
 
+                # Crear una ventana emergente
+                popup = tk.Toplevel()
+                popup.title("Información del Centro")
+
+                # Configurar la posición de la ventana emergente
+                popup.geometry("+{}+{}".format(ventana.winfo_x() + 700, ventana.winfo_y() + 150))
+
+                # Mostrar más información en la ventana emergente
+                info = f"Nombre: {centro.get('nombre')}\n"
+                info += f"Tipo: {centro.get('tipo')}\n"
+                info += f"Dirección: {centro.get('direccion')}\n"
+                info += f"Código Postal: {centro.get('codigo_postal')}\n"
+                info += f"Teléfono: {centro.get('telefono')}\n"
+                info += f"Descripción: {centro.get('descripcion')}\n"
+                info += f"Localidad: {centro.get('localidad')}\n"
+                info += f"Provincia: {centro.get('provincia')}\n"
+                label = tk.Label(popup, text=info, wraplength=250, justify=tk.LEFT)
+                label.pack()
     url = 'http://127.0.0.1:5004/buscar'
     # tipo = ""
     # if variableControlTipo.get() != "Todos":
