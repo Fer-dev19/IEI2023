@@ -29,9 +29,8 @@ def cargar_datos():
         comunidades = ["Valencia", "Cataluña", "Murcia"]
     else:
         comunidades = seleccion
-
+    lineas_procesadas = 0
     for comunidad in comunidades:
-        lineas_procesadas = 0
         if comunidad == "Valencia":
             wrapperCSV.convertir_csv_a_json()
             extractor = ExtractorCV('./baseDatos.db', './archivosJSON/CV.json')
