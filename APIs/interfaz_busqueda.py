@@ -130,7 +130,7 @@ localidadInput, codPostalInput, provinciaInput = entries
 tipoOptions = ["Público","Privado", "Concertado", "Otros", "Todos"]
 variableControlTipo = tk.StringVar(ventana)
 variableControlTipo.set(tipoOptions[0])
-tipoInput = tk.OptionMenu(frame_inputs, variableControlTipo, tipoOptions[0], *tipoOptions)
+tipoInput = tk.OptionMenu(frame_inputs, variableControlTipo, *tipoOptions)
 tipoInput.grid(row=3, column=1, sticky='w')
 
 cancelar = tk.Button(ventana, text="Cancelar", command=ventana.destroy)
