@@ -16,10 +16,3 @@ def convertir_csv_a_json():
         raise FileNotFoundError(f"El archivo CSV {archivo_csv} no se encontró.")
     except Exception as e:
         raise Exception(f"Ocurrió un error al convertir CSV a JSON: {e}")
-
-#Ejemplo de uso
-# try:
-#     convertir_csv_a_json()
-#     print("Conversión completada con éxito.")
-# except Exception as e:
-#     print(e)

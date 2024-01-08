@@ -91,8 +91,7 @@ class ExtractorCV:
             #latitude = GpsScraper.get_latitude(self.driver)
             #longitude = GpsScraper.get_longitude(self.driver)
 
-            gmaps_key = "AIzaSyCn3IQfiK0HoCdOUBmWdgQUlQCBaLj3LZQ" 
-            geocoder = GeocodingClient(gmaps_key) 
+            geocoder = GeocodingClient() 
             
             latitude, longitude = geocoder.get_coordinates(centro['TIPO_VIA']+ " " + centro['DIRECCION'] + ", " + centro['NUMERO'] + ", " + centro['CODIGO_POSTAL'] + ", " + centro['LOCALIDAD'])# Reemplaza con tu clave de API real
 

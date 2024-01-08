@@ -2,13 +2,16 @@ import sqlite3
 import json
 
 class ExtractorCAT:
+    #inicializamos el extractor pasándole el path de la bd y de la carpeta donde se almacenarán los JSON
     def __init__(self, db_path, json_path):
         self.db_path = db_path
         self.json_path = json_path
 
+    #Este método conecta con la base de datos mediante sqlite
     def conectar_a_base_datos(self):
         return sqlite3.connect(self.db_path)
 
+    #Creamos las tablas en caso de que no existan
     def crear_tablas(self, conn):
         cursor = conn.cursor()
         cursor.execute('''CREATE TABLE IF NOT EXISTS Provincia (codigo INTEGER PRIMARY KEY, nombre TEXT)''')
@@ -16,10 +19,15 @@ class ExtractorCAT:
         cursor.execute('''CREATE TABLE IF NOT EXISTS Centro_Educativo (nombre TEXT PRIMARY KEY, tipo TEXT, direccion TEXT, codigo_postal TEXT, longitud REAL, latitud REAL, telefono TEXT, descripcion TEXT, localidad INTEGER, FOREIGN KEY (localidad) REFERENCES Localidad(codigo))''')
         conn.commit()
 
+    #Con este método 'leemos' el json de Cataluña y lo devolvemos para utilizarlo en otro método
     def leer_archivo_json(self):
         with open(self.json_path, 'r', encoding='utf-8') as json_file:
             return json.load(json_file)
 
+    #Aquí se procesan los datos y se adaptan los que haya que adaptar para que coincidan con el esquema global
+    #También se insertan los datos en la base de datos mediante el uso de los métodos:
+        #insertar_provincia, insertar_localidad, insertar_centro_educativo
+    #La variable de lineas procesadas nos devuelve las líneas insertadas en la BD.
     def procesar_datos(self, conn, data):
         lineas_procesadas = 0
         for entry in data:
@@ -45,16 +53,19 @@ class ExtractorCAT:
             lineas_procesadas += 1
         return lineas_procesadas
 
+    #Inserta una provincia si no está en la BD
     def insertar_provincia(self, conn, codigo, nombre):
         cursor = conn.cursor()
         cursor.execute('INSERT OR IGNORE INTO Provincia (codigo, nombre) VALUES (?, ?)', (codigo, nombre))
         conn.commit()
 
+    #Inserta una localidad si no está en la BD
     def insertar_localidad(self, conn, codigo, nombre, provincia):
         cursor = conn.cursor()
         cursor.execute('INSERT OR IGNORE INTO Localidad (codigo, nombre, provincia) VALUES (?, ?, ?)', (codigo, nombre, provincia))
         conn.commit()
 
+    #Inserta un centro educativo si no está en la BD
     def insertar_centro_educativo(self, conn, nombre, tipo, direccion, codigo_postal, longitud, latitud, telefono, descripcion, localidad):
         cursor = conn.cursor()
         cursor.execute('''
@@ -63,6 +74,7 @@ class ExtractorCAT:
         ''', (nombre, tipo, direccion, codigo_postal, longitud, latitud, telefono, descripcion, localidad))
         conn.commit()
 
+    #Mediante este método adaptamos el tipo de centro al esquema global
     def obtener_tipo(self, naturaleza):
         tipo_centro = {
             'Públic': 'Público',
@@ -71,6 +83,7 @@ class ExtractorCAT:
         }
         return tipo_centro.get(naturaleza, None)
 
+    #Este es el método que se ejecutará desde la API para iniciar la extracción
     def ejecutar(self):
         conn = self.conectar_a_base_datos()
         try:

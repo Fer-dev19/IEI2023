@@ -1,7 +1,11 @@
+import os
 import googlemaps
 
 class GeocodingClient:
-    def __init__(self, api_key):
+    def __init__(self):
+        api_key = os.getenv('GOOGLE_API_KEY')
+        if not api_key:
+            raise ValueError("La clave de API de Google no está definida en las variables de entorno.")
         self.client = googlemaps.Client(key=api_key)
 
     def get_coordinates(self, address):
