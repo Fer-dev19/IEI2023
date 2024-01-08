@@ -1,7 +1,11 @@
 import os
 import googlemaps
 
+#Esta clase nos permite obtener las coordenadas de Valencia debido a que
+#la web de coordenadas que utilizábamos no está funcionando bien.
 class GeocodingClient:
+    #Es el método "constructor" de la clase
+    #La API está añadida a las variables de entorno para no vulnerarla al subirla a un repositorio
     def __init__(self):
         api_key = os.getenv('GOOGLE_API_KEY')
         if not api_key:

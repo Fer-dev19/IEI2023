@@ -5,15 +5,18 @@ from extractores.GeocodingClient import GeocodingClient
 from extractores.gps_scraper import GpsScraper
 
 class ExtractorCV:
+    #Método que inicia el extractor
     def __init__(self, db_path, json_path):
         self.db_path = db_path
         self.json_path = json_path
         self.conn = None
         self.driver = None
 
+    #Método para conectar la base de datos
     def conectar_a_base_datos(self):
         self.conn = sqlite3.connect(self.db_path)
 
+    #Método para cerrar la conexión con la base de datos
     def cerrar_conexion_base_datos(self):
         if self.conn:
             self.conn.close()
@@ -71,11 +74,13 @@ class ExtractorCV:
             'OTROS': 'Otros'
         }.get(regimen, None)
     
+    #Método para cambiar el nombre de Valencia ya que vimos que debido al acento no se buscaba bien
     def acentoValencia(self, centro):
         if centro['LOCALIDAD'] == 'VALÈNCIA':
             return 'Valencia'
         else: return centro['LOCALIDAD']
 
+    #Método para procesar los datos que vamos a insertar
     def procesar_datos(self):
         lineas_procesadas = 0
         self.crear_tablas()
@@ -91,6 +96,9 @@ class ExtractorCV:
             #latitude = GpsScraper.get_latitude(self.driver)
             #longitude = GpsScraper.get_longitude(self.driver)
 
+            #Hemos comentado el código anterior debido a que la web de las coordenadas no
+            #estaba funcionando bien. Ahora estamos utilziando la API de GoogleMaps
+
             geocoder = GeocodingClient() 
             
             latitude, longitude = geocoder.get_coordinates(centro['TIPO_VIA']+ " " + centro['DIRECCION'] + ", " + centro['NUMERO'] + ", " + centro['CODIGO_POSTAL'] + ", " + centro['LOCALIDAD'])# Reemplaza con tu clave de API real
@@ -102,6 +110,7 @@ class ExtractorCV:
             lineas_procesadas += 1
         return lineas_procesadas
     
+    #Este es el método que se utiliza desde la API para iniciar toda la carga
     def ejecutar(self):
         try:
             self.conectar_a_base_datos()

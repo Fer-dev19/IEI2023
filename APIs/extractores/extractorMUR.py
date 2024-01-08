@@ -2,18 +2,23 @@ import sqlite3
 import json
 
 class ExtractorMUR:
+
+    #Mediante este método iniciamos el extractor
     def __init__(self, db_path, json_path):
         self.db_path = db_path
         self.json_path = json_path
         self.conn = None
 
+    #Métodop de conexión con la BD
     def conectar_a_base_datos(self):
         self.conn = sqlite3.connect(self.db_path)
 
+    #Método para cerrar la conexión con la BD
     def cerrar_conexion_base_datos(self):
         if self.conn:
             self.conn.close()
 
+    #Método que crea las tablas. En caso de ya existir no lo hace
     def crear_tablas(self):
         cursor = self.conn.cursor()
         cursor.execute('''
@@ -46,6 +51,8 @@ class ExtractorMUR:
         ''')
         self.conn.commit()
 
+    #Con este método insertamos todos los datos en la BD
+    #Si ya existen los datos los ignora
     def insertar_datos(self, data):
         lineas_procesadas = 0
         # Suponemos que la lógica de obtención del tipo de centro ya está definida en una función obtener_tipo()
@@ -73,10 +80,12 @@ class ExtractorMUR:
             lineas_procesadas += 1
         return lineas_procesadas
 
+    #Mediante este método leemos el archivo json para posteriormente extraer los datos
     def leer_archivo_json(self):
         with open(self.json_path, 'r', encoding='utf-8') as file:
             return json.load(file)
 
+    #Con este método transformamos y adaptamos el tipo de colegio para el esquema global
     def obtener_tipo(self, titularidad):
         return {
             'P': 'Público',
@@ -84,6 +93,7 @@ class ExtractorMUR:
             'C': 'Concertado'
         }.get(titularidad, None)
 
+    #Este es el método que se ejecuta desde las API para iniciar la carga
     def ejecutar(self):
         try:
             self.conectar_a_base_datos()
