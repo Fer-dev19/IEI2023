@@ -72,6 +72,7 @@ def filtrar():
             nombre, tipo, direccion, codPostal, telefono, descripcion, localidad, provincia))
     elif response.status_code == 404:
         print('Localidad no encontrada')
+        map_widget.delete_all_marker()
         resultTable.delete(*resultTable.get_children())
         resultTable.insert('', tk.END, values=('no hay resultados'))
     else:
