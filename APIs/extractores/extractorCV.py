@@ -1,6 +1,7 @@
 import sqlite3
 import json
 import time
+from extractores.GeocodingClient import GeocodingClient
 from extractores.gps_scraper import GpsScraper
 
 class ExtractorCV:
@@ -79,16 +80,21 @@ class ExtractorCV:
         lineas_procesadas = 0
         self.crear_tablas()
         # Se llama a la clase para inicializar la búsqueda
-        GpsScraper.setup_search(self.driver)
+        #GpsScraper.setup_search(self.driver)
 
         for centro in self.data:
             # Se le introducen varios parámetros adicionales a la dirección para que la página no genere centros erróneos
-            GpsScraper.search(self.driver, centro['TIPO_VIA']+ " " + centro['DIRECCION'] + ", " + centro['NUMERO'] + ", " + centro['CODIGO_POSTAL'] + ", " + centro['LOCALIDAD'])
-            time.sleep(1)
+            #GpsScraper.search(self.driver, centro['TIPO_VIA']+ " " + centro['DIRECCION'] + ", " + centro['NUMERO'] + ", " + centro['CODIGO_POSTAL'] + ", " + centro['LOCALIDAD'])
+            #time.sleep(1)
 
             #Se obtienen los parámetros calculados por la página web
-            latitude = GpsScraper.get_latitude(self.driver)
-            longitude = GpsScraper.get_longitude(self.driver)
+            #latitude = GpsScraper.get_latitude(self.driver)
+            #longitude = GpsScraper.get_longitude(self.driver)
+
+            gmaps_key = "AIzaSyCn3IQfiK0HoCdOUBmWdgQUlQCBaLj3LZQ" 
+            geocoder = GeocodingClient(gmaps_key) 
+            
+            latitude, longitude = geocoder.get_coordinates(centro['TIPO_VIA']+ " " + centro['DIRECCION'] + ", " + centro['NUMERO'] + ", " + centro['CODIGO_POSTAL'] + ", " + centro['LOCALIDAD'])# Reemplaza con tu clave de API real
 
             # Se llaman a los métodos para insertar los valores en la base de datos
             self.insertar_provincia(centro['CODIGO_POSTAL'][:2], centro['PROVINCIA'])
@@ -101,7 +107,7 @@ class ExtractorCV:
         try:
             self.conectar_a_base_datos()
             self.leer_archivo_json()
-            self.driver = GpsScraper.setup_browser()
+            #self.driver = GpsScraper.setup_browser()
             lineas_procesadas = self.procesar_datos()
             return lineas_procesadas
         finally:
