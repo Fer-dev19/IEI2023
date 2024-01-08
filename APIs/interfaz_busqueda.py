@@ -5,14 +5,16 @@ import tkintermapview
 from tkinterweb import HtmlFrame
 import interfaz_carga
 
+#Funcion que obtiene los centros buscados
 def filtrar():
+    #Funcion que indica en los campos de busqueda cual es el centro sobre el que se ha hecho click
     def mostrarDatos(marker):
         localidadInput.delete(0, tk.END)
         provinciaInput.delete(0, tk.END)
         codPostalInput.delete(0, tk.END)
         for centro in centros:
             if centro.get('nombre') == marker.data:
-                localidadInput.insert(tk.END,centro.get('localidad'))
+                localidadInput.insert(tk.END, centro.get('localidad'))
                 codPostalInput.insert(tk.END, centro.get('codigo_postal'))
                 provinciaInput.insert(tk.END, centro.get('provincia'))
                 for tipo in tipoOptions:
@@ -38,16 +40,16 @@ def filtrar():
                 info += f"Provincia: {centro.get('provincia')}\n"
                 label = tk.Label(popup, text=info, wraplength=250, justify=tk.LEFT)
                 label.pack()
-    url = 'http://127.0.0.1:5004/buscar'
-    # tipo = ""
-    # if variableControlTipo.get() != "Todos":
-    #     tipo = variableControlTipo.get()
-    # else:
-    #     tipo = ""
-    # Parámetros a pasar
-    params = {'localidad':localidadInput.get(),'codPostal': codPostalInput.get(), 'provincia':provinciaInput.get(), 'tipo': variableControlTipo.get()}
-    response = requests.get(url, params=params)
 
+    #Peticion a base de datos para obtener los centros
+    url = 'http://127.0.0.1:5004/buscar'
+    # Parámetros a pasar para filtrar
+    params = {'localidad': localidadInput.get(), 'codPostal': codPostalInput.get(), 'provincia': provinciaInput.get(),
+              'tipo': variableControlTipo.get()}
+    response = requests.get(url, params=params)
+    #Procesamiento de la respuesta
+    #Por cada centro se obtienen sus datos, si estos constan de latitud y longitud se añadira un marcador en el mapa
+    #Finalmente cada registro de centro se añade a la tabla de resultado donde se mostrara.
     if response.status_code == 200:
         map_widget.delete_all_marker()
         resultTable.delete(*resultTable.get_children())
@@ -69,7 +71,7 @@ def filtrar():
 
             info_localidad = f"Nombre: {nombre}, Localidad: {localidad}, Provincia: {provincia}, Dirección: {direccion}\n"
             resultTable.insert('', tk.END, values=(
-            nombre, tipo, direccion, codPostal, telefono, descripcion, localidad, provincia))
+                nombre, tipo, direccion, codPostal, telefono, descripcion, localidad, provincia))
     elif response.status_code == 404:
         print('Localidad no encontrada')
         map_widget.delete_all_marker()
@@ -78,64 +80,26 @@ def filtrar():
     else:
         print(f'Error en la solicitud: {response.status_code}')
 
-def cargarMarcadores():
-    def mostrarDatos(marker):
-        localidadInput.delete(0, tk.END)
-        provinciaInput.delete(0, tk.END)
-        codPostalInput.delete(0, tk.END)
-        for centro in centros:
-            if centro.get('nombre') == marker.data:
-                localidadInput.insert(tk.END,centro.get('localidad'))
-                codPostalInput.insert(tk.END, centro.get('codigo_postal'))
-                provinciaInput.insert(tk.END, centro.get('provincia'))
-                for tipo in tipoOptions:
-                    if centro.get('tipo') == tipo:
-                        variableControlTipo.set(tipo)
-                        break
 
-    url = 'http://127.0.0.1:5004/getCentros'
-    response = requests.get(url)
-    if response.status_code == 200:
-        centros = response.json()
-        map_widget.delete_all_marker()
-        for centro in centros:
-            nombre = centro.get('nombre', 'Nombre no disponible')
-            codPostal = centro.get('codigo_postal', 'Codigo postal no disponible')
-            localidad = centro.get('localidad', 'Localidad no disponible')
-            provincia = centro.get('provincia', 'Provincia no disponible')
-            direccion = centro.get('direccion', 'Dirección no disponible')
-            tipo = centro.get('tipo', 'Tipo no disponible')
-            latitud = centro.get('latitud', 'Latitud no disponible')
-            longitud = centro.get('longitud', 'Longitud no disponible')
-            telefono = centro.get('telefono', 'Teléfono no disponible')
-            descripcion = centro.get('descripcion', 'Descripción no disponible')
-
-            if latitud is not None and longitud is not None:
-                map_widget.set_marker(latitud, longitud, nombre, data=nombre, command=mostrarDatos)
-
-            info_localidad = f"Nombre: {nombre}, Localidad: {localidad}, Provincia: {provincia}, Dirección: {direccion}\n"
-            resultTable.insert('', tk.END, values=(nombre, tipo, direccion, codPostal, telefono, descripcion, localidad, provincia))
-    elif response.status_code == 404:
-        messagebox.showinfo("Resultado", "No hay resultados")
-    else:
-        messagebox.showerror("Error", "Se produjo un error en la búsqueda")
-
+# Funcion que abre la interfaz de carga de datos
 def cargar():
     interfaz_carga.abrir_interfaz_carga(ventana)
 
+
+# Crear ventana principal de la interfaz
 ventana = tk.Tk()
 ventana.title("Buscador de centros educativos")
 ventana.geometry("1280x720")
 ventana.resizable(False, False)
 
+# Etiqueta titulo
 etiqueta = tk.Label(ventana, text="Buscador de centros educativos", font=("Arial", 26))
 etiqueta.place(x=400, y=30)
-
-
 
 frame_inputs = tk.Frame(ventana)
 frame_inputs.place(x=300, y=120)
 
+# Crear las distintas etiquetas de los campos de busqueda
 labels = ["Localidad:", "Cod. Postal:", "Provincia:", "Tipo:"]
 entries = [None, None, None]
 for i, label in enumerate(labels):
@@ -144,14 +108,17 @@ for i, label in enumerate(labels):
         entries[i] = tk.Entry(frame_inputs)
         entries[i].grid(row=i, column=1)
 
+# Crear los elementos de entrada de datos para busqueda
 localidadInput, codPostalInput, provinciaInput = entries
 
-tipoOptions = ["Público","Privado", "Concertado", "Otros", "Todos"]
+# Crear el input menu desplegable de la interfaz
+tipoOptions = ["Público", "Privado", "Concertado", "Otros", "Todos"]
 variableControlTipo = tk.StringVar(ventana)
 variableControlTipo.set(tipoOptions[0])
 tipoInput = tk.OptionMenu(frame_inputs, variableControlTipo, *tipoOptions)
 tipoInput.grid(row=3, column=1, sticky='w')
 
+# Crear los botones de la interfaz
 cancelar = tk.Button(ventana, text="Cancelar", command=ventana.destroy)
 cancelar.place(x=380, y=260)
 aceptar = tk.Button(ventana, text="Aceptar", command=filtrar)
@@ -177,10 +144,11 @@ scrollbar_horizontal.place(x=200, y=700, width=800)
 for col in columns:
     resultTable.heading(col, text=col.capitalize())
 
+# Crear el mapa de la interfaz
 map_widget = tkintermapview.TkinterMapView(ventana, width=400, height=400, corner_radius=0)
 map_widget.place(x=800, y=275, anchor=tk.CENTER)
 map_widget.set_position(40.417278703578596, -3.701168707505883)
 map_widget.set_zoom(6)
 
-
+# Ejecutar la ventana
 ventana.mainloop()
