@@ -30,12 +30,24 @@ class ExtractorCV:
         self.conn.commit()
 
     def insertar_provincia(self, codigo, nombre):
+        try:
+            codigo_int = int(codigo)
+        except ValueError:
+            print(f"El código de provincia no es un número: {codigo}")
+            return
         cursor = self.conn.cursor()
         # Si la provincia no está presente en la tabla, se inserta en la misma
         cursor.execute('INSERT OR IGNORE INTO Provincia VALUES (?, ?)', (codigo, nombre))
         self.conn.commit()
 
     def insertar_localidad(self, codigo, nombre, provincia):
+        try:
+            codigo_int = int(codigo)  # Convertir el código a un entero
+            provincia_int = int(provincia)  # Convertir el código de provincia a un entero
+        except ValueError:
+        # Manejar el caso en que alguno de los códigos no es un número
+            print(f"Datos no numéricos encontrados: codigo={codigo}, provincia={provincia}")
+            return  # No intentar insertar este valor en la base de datos
         cursor = self.conn.cursor()
         # Si la localidad no está presente en la tabla, se inserta en la misma
         cursor.execute('INSERT OR IGNORE INTO Localidad VALUES (?, ?, ?)', (codigo, nombre, provincia))

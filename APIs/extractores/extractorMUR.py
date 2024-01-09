@@ -57,6 +57,9 @@ class ExtractorMUR:
         lineas_procesadas = 0
         # Suponemos que la lógica de obtención del tipo de centro ya está definida en una función obtener_tipo()
         for centro in data:
+            geo_referencia = centro.get('geo-referencia', {})
+            longitud = geo_referencia.get('lon', None)
+            latitud = geo_referencia.get('lat', None)
             codigo_postal = centro['cpcen'] if centro['cpcen'] else None
             codigo_localidad = int(codigo_postal) if codigo_postal and codigo_postal.isdigit() else None
             cursor = self.conn.cursor()
@@ -70,8 +73,8 @@ class ExtractorMUR:
                 self.obtener_tipo(centro['titularidad']),
                 centro['domcen'],
                 codigo_postal,
-                centro['geo-referencia']['lon'],
-                centro['geo-referencia']['lat'],
+                longitud,
+                latitud,
                 centro['telcen'],
                 centro['presentacionCorta'] + ' ' + centro['web'],
                 codigo_localidad
