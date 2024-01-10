@@ -55,6 +55,10 @@ class ExtractorCV:
 
     def insertar_centro_educativo(self, centro, longitud, latitud):
         cursor = self.conn.cursor()
+        mensaje = ""
+        for clave, valor in centro.items():
+            if valor == None:
+                mensaje += f"{clave} no tiene valor. Lo hemos sustituido por Null\n"
         # Si el centro no está presente en la tabla, se inserta en la misma
         cursor.execute('''
             INSERT OR IGNORE INTO Centro_Educativo (nombre, tipo, direccion, codigo_postal, longitud, latitud, telefono, descripcion, localidad)
@@ -71,6 +75,7 @@ class ExtractorCV:
             centro['CODIGO_POSTAL']
         ))
         self.conn.commit()
+        return mensaje
 
     # Método para leer el archivo JSON
     def leer_archivo_json(self):
@@ -118,9 +123,9 @@ class ExtractorCV:
             # Se llaman a los métodos para insertar los valores en la base de datos
             self.insertar_provincia(centro['CODIGO_POSTAL'][:2], centro['PROVINCIA'])
             self.insertar_localidad(centro['CODIGO_POSTAL'], self.acentoValencia(centro), centro['CODIGO_POSTAL'][:2])
-            self.insertar_centro_educativo(centro, longitude, latitude)
+            mensajeInsert = self.insertar_centro_educativo(centro, longitude, latitude)
             lineas_procesadas += 1
-        return lineas_procesadas
+        return str(lineas_procesadas) + "\n" + mensajeInsert
     
     #Este es el método que se utiliza desde la API para iniciar toda la carga
     def ejecutar(self):
@@ -128,8 +133,8 @@ class ExtractorCV:
             self.conectar_a_base_datos()
             self.leer_archivo_json()
             #self.driver = GpsScraper.setup_browser()
-            lineas_procesadas = self.procesar_datos()
-            return lineas_procesadas
+            textoInsert = self.procesar_datos()
+            return str(textoInsert)
         finally:
             if self.driver:
                 self.driver.quit()
