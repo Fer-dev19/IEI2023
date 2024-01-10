@@ -23,9 +23,9 @@ def abrir_interfaz_carga(parent_root):
                 if response.status_code == 200:
                     #resultados_carga.insert(tk.END, "Los datos han sido cargados con éxito.\n")
                     respuesta = response.json()
-                    mensaje = respuesta.get("mensaje", "")
                     lineas = respuesta.get("lineas_procesadas", 0)
-                    resultados_carga.insert(tk.END, f"{mensaje}. Líneas procesadas: {lineas}\n")
+                    mensaje = respuesta.get("mensaje_error", "")
+                    resultados_carga.insert(tk.END, f"Líneas procesadas: {lineas}\n{mensaje}")
                 else:
                     resultados_carga.insert(tk.END, f"Error al cargar los datos: {response.status_code} {response.text}\n")
             except Exception as e:

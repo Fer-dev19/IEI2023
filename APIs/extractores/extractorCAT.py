@@ -68,6 +68,22 @@ class ExtractorCAT:
     #Inserta un centro educativo si no está en la BD
     def insertar_centro_educativo(self, conn, nombre, tipo, direccion, codigo_postal, longitud, latitud, telefono, descripcion, localidad):
         cursor = conn.cursor()
+        mensaje = ""
+        parametros = {
+        'nombre': nombre,
+        'tipo': tipo,
+        'direccion': direccion,
+        'codigo_postal': codigo_postal,
+        'longitud': longitud,
+        'latitud': latitud,
+        'telefono': telefono,
+        'descripcion': descripcion,
+        'localidad': localidad
+        }
+    # Comprobar si algún parámetro es nulo
+        for clave, valor in parametros.items():
+            if valor is None or '':
+                mensaje += f"{clave} no tiene valor. Lo hemos sustituido por Null\n"
         cursor.execute('''
             INSERT OR IGNORE INTO Centro_Educativo (nombre, tipo, direccion, codigo_postal, longitud, latitud, telefono, descripcion, localidad)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)

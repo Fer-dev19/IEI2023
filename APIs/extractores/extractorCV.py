@@ -56,8 +56,12 @@ class ExtractorCV:
     def insertar_centro_educativo(self, centro, longitud, latitud):
         cursor = self.conn.cursor()
         mensaje = ""
-        for clave, valor in centro.items():
-            if valor == None:
+
+        claves_a_verifircar = ['DENOMINACION', 'REGIMEN', 'CODIGO_POSTAL', 'TELEFONO']
+
+        for clave in claves_a_verifircar:
+            valor = centro.get(clave)
+            if valor is None or valor == '':
                 mensaje += f"{clave} no tiene valor. Lo hemos sustituido por Null\n"
         # Si el centro no está presente en la tabla, se inserta en la misma
         cursor.execute('''
@@ -67,7 +71,7 @@ class ExtractorCV:
             centro['DENOMINACION'],
             self.obtener_tipo(centro['REGIMEN']),
             f"{centro['TIPO_VIA']} {centro['DIRECCION']} {centro['NUMERO']}",
-            centro['CODIGO_POSTAL'],
+            self.obtener_codPostal(centro['CODIGO_POSTAL']),
             longitud,  
             latitud,
             centro['TELEFONO'] if centro['TELEFONO'] and len(centro["TELEFONO"]) == 9 else None,
@@ -81,6 +85,12 @@ class ExtractorCV:
     def leer_archivo_json(self):
         with open(self.json_path, 'r', encoding='utf-8') as file:
             self.data = json.load(file)
+
+    def obtener_codPostal(self, cod):
+        if cod is None:
+            return None
+        else:
+            return cod
 
     # Método para obtener el tipo del centro
     def obtener_tipo(self, regimen):
@@ -100,6 +110,7 @@ class ExtractorCV:
     #Método para procesar los datos que vamos a insertar
     def procesar_datos(self):
         lineas_procesadas = 0
+        mensaje_total = ""
         self.crear_tablas()
         # Se llama a la clase para inicializar la búsqueda
         #GpsScraper.setup_search(self.driver)
@@ -123,9 +134,10 @@ class ExtractorCV:
             # Se llaman a los métodos para insertar los valores en la base de datos
             self.insertar_provincia(centro['CODIGO_POSTAL'][:2], centro['PROVINCIA'])
             self.insertar_localidad(centro['CODIGO_POSTAL'], self.acentoValencia(centro), centro['CODIGO_POSTAL'][:2])
-            mensajeInsert = self.insertar_centro_educativo(centro, longitude, latitude)
+            mensaje = self.insertar_centro_educativo(centro, longitude, latitude)
+            mensaje_total += mensaje
             lineas_procesadas += 1
-        return str(lineas_procesadas) + "\n" + mensajeInsert
+        return lineas_procesadas, mensaje_total
     
     #Este es el método que se utiliza desde la API para iniciar toda la carga
     def ejecutar(self):
@@ -133,8 +145,8 @@ class ExtractorCV:
             self.conectar_a_base_datos()
             self.leer_archivo_json()
             #self.driver = GpsScraper.setup_browser()
-            textoInsert = self.procesar_datos()
-            return str(textoInsert)
+            lineas_procesadas, mensaje_error = self.procesar_datos()
+            return lineas_procesadas, mensaje_error
         finally:
             if self.driver:
                 self.driver.quit()
