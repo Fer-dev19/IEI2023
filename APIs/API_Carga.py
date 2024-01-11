@@ -49,7 +49,7 @@ def cargar_datos():
             lineas_procesadas, mensaje = extractor.ejecutar()
             mensaje_total += mensaje
             lineas_procesadas_total += lineas_procesadas
-    return jsonify({'lineas_procesadas':lineas_procesadas, 'mensaje_error':mensaje_total}), 200
+    return jsonify({'lineas_procesadas':lineas_procesadas_total, 'mensaje_error':mensaje_total}), 200
 
 if __name__ == '__main__':
     app.run(debug=True, port=5003)
