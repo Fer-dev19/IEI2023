@@ -29,21 +29,27 @@ def cargar_datos():
         comunidades = ["Valencia", "Cataluña", "Murcia"]
     else:
         comunidades = seleccion
-    lineas_procesadas = 0
-    mensaje_error = ""
+    lineas_procesadas_total = 0
+    mensaje_total = ""
     for comunidad in comunidades:
         if comunidad == "Valencia":
             wrapperCSV.convertir_csv_a_json()
             extractor = ExtractorCV('./baseDatos.db', './archivosJSON/CV.json')
-            lineas_procesadas, mensaje_error = extractor.ejecutar()
+            lineas_procesadas, mensaje = extractor.ejecutar()
+            mensaje_total += mensaje
+            lineas_procesadas_total += lineas_procesadas
         elif comunidad == "Cataluña":
             wrapperXML.convertir_xml_a_json()
             extractor = ExtractorCAT('./baseDatos.db', './archivosJSON/CAT.json')
-            lineas_procesadas, mensaje_error = extractor.ejecutar()
+            lineas_procesadas, mensaje = extractor.ejecutar()
+            mensaje_total += mensaje
+            lineas_procesadas_total += lineas_procesadas
         elif comunidad == "Murcia":
             extractor = ExtractorMUR('./baseDatos.db', './archivosJSON/MUR.json')
-            lineas_procesadas, mensaje_error = extractor.ejecutar()
-    return jsonify({'lineas_procesadas':lineas_procesadas, 'mensaje_error':mensaje_error}), 200
+            lineas_procesadas, mensaje = extractor.ejecutar()
+            mensaje_total += mensaje
+            lineas_procesadas_total += lineas_procesadas
+    return jsonify({'lineas_procesadas':lineas_procesadas, 'mensaje_error':mensaje_total}), 200
 
 if __name__ == '__main__':
     app.run(debug=True, port=5003)
