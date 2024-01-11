@@ -55,14 +55,19 @@ class ExtractorMUR:
     #Si ya existen los datos los ignora
     def insertar_datos(self, data):
         lineas_procesadas = 0
+        mensaje_total = ""
         # Suponemos que la lógica de obtención del tipo de centro ya está definida en una función obtener_tipo()
         for centro in data:
+            mensaje = ""
             geo_referencia = centro.get('geo-referencia', {})
             longitud = geo_referencia.get('lon', None)
             latitud = geo_referencia.get('lat', None)
             codigo_postal = centro['cpcen'] if centro['cpcen'] else None
             codigo_localidad = int(codigo_postal) if codigo_postal and codigo_postal.isdigit() else None
             cursor = self.conn.cursor()
+            for clave, valor in centro.items():
+                if valor is None:
+                    mensaje += f"El atributo '{clave}' es null.\n"
             cursor.execute('INSERT OR IGNORE INTO Provincia VALUES (?, ?)', (30, 'Murcia'))
             cursor.execute('INSERT OR IGNORE INTO Localidad VALUES (?, ?, ?)', (codigo_localidad, centro['loccen'], 30))
             cursor.execute('''
@@ -80,8 +85,9 @@ class ExtractorMUR:
                 codigo_localidad
             ))
             self.conn.commit()
+            mensaje_total += mensaje
             lineas_procesadas += 1
-        return lineas_procesadas
+        return lineas_procesadas, mensaje_total
 
     #Mediante este método leemos el archivo json para posteriormente extraer los datos
     def leer_archivo_json(self):
@@ -102,7 +108,7 @@ class ExtractorMUR:
             self.conectar_a_base_datos()
             self.crear_tablas()
             data = self.leer_archivo_json()
-            lineas_procesadas = self.insertar_datos(data)
-            return lineas_procesadas
+            lineas_procesadas, mensaje_error = self.insertar_datos(data)
+            return lineas_procesadas, mensaje_error
         finally:
             self.cerrar_conexion_base_datos()

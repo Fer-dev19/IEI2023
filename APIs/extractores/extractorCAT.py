@@ -49,9 +49,9 @@ class ExtractorCAT:
             tipo_centro = self.obtener_tipo(entry['nom_naturalesa'])
             descripcion_centro = f"{entry['estudis']}, {entry['nom_titularitat']}"
 
-            self.insertar_centro_educativo(conn, entry['denominaci_completa'], tipo_centro, entry['adre_a'], entry['codi_postal'], coordenadas_x, coordenadas_y, entry.get('telcen', None), descripcion_centro, codigo_localidad)
+            mensaje_error = self.insertar_centro_educativo(conn, entry['denominaci_completa'], tipo_centro, entry['adre_a'], entry['codi_postal'], coordenadas_x, coordenadas_y, entry.get('telcen', None), descripcion_centro, codigo_localidad)
             lineas_procesadas += 1
-        return lineas_procesadas
+        return lineas_procesadas, mensaje_error
 
     #Inserta una provincia si no está en la BD
     def insertar_provincia(self, conn, codigo, nombre):
@@ -70,25 +70,27 @@ class ExtractorCAT:
         cursor = conn.cursor()
         mensaje = ""
         parametros = {
-        'nombre': nombre,
-        'tipo': tipo,
-        'direccion': direccion,
-        'codigo_postal': codigo_postal,
-        'longitud': longitud,
-        'latitud': latitud,
-        'telefono': telefono,
-        'descripcion': descripcion,
-        'localidad': localidad
+            'nombre': nombre,
+            'tipo': tipo,
+            'direccion': direccion,
+            'codigo_postal': codigo_postal,
+            'longitud': longitud,
+            'latitud': latitud,
+            'telefono': telefono,
+            'descripcion': descripcion,
+            'localidad': localidad
         }
-    # Comprobar si algún parámetro es nulo
+
         for clave, valor in parametros.items():
-            if valor is None or '':
-                mensaje += f"{clave} no tiene valor. Lo hemos sustituido por Null\n"
+            if valor is None:
+                mensaje += f"El atributo '{clave}' es null.\n"
         cursor.execute('''
             INSERT OR IGNORE INTO Centro_Educativo (nombre, tipo, direccion, codigo_postal, longitud, latitud, telefono, descripcion, localidad)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (nombre, tipo, direccion, codigo_postal, longitud, latitud, telefono, descripcion, localidad))
         conn.commit()
+        print(mensaje)
+        return mensaje
 
     #Mediante este método adaptamos el tipo de centro al esquema global
     def obtener_tipo(self, naturaleza):
@@ -105,7 +107,7 @@ class ExtractorCAT:
         try:
             self.crear_tablas(conn)
             data = self.leer_archivo_json()
-            lineas_procesadas = self.procesar_datos(conn, data)
-            return lineas_procesadas
+            lineas_procesadas, mensaje_error = self.procesar_datos(conn, data)
+            return lineas_procesadas, mensaje_error
         finally:
             conn.close()

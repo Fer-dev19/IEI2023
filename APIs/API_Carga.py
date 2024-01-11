@@ -39,10 +39,10 @@ def cargar_datos():
         elif comunidad == "Cataluña":
             wrapperXML.convertir_xml_a_json()
             extractor = ExtractorCAT('./baseDatos.db', './archivosJSON/CAT.json')
-            lineas_procesadas += extractor.ejecutar()
+            lineas_procesadas, mensaje_error = extractor.ejecutar()
         elif comunidad == "Murcia":
             extractor = ExtractorMUR('./baseDatos.db', './archivosJSON/MUR.json')
-            lineas_procesadas += extractor.ejecutar()
+            lineas_procesadas, mensaje_error = extractor.ejecutar()
     return jsonify({'lineas_procesadas':lineas_procesadas, 'mensaje_error':mensaje_error}), 200
 
 if __name__ == '__main__':
